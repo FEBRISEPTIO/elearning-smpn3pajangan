@@ -227,7 +227,7 @@
                                 <i class="fas fa-school text-purple-600"></i>
                             </div>
                             <div>
-                                <p class="text-xs text-purple-700">Kelas Terdaftar</p>
+                                <p class="text-xs text-purple-700">Kelas Yang Terdaftar</p>
                                 <p class="text-xl font-bold text-purple-800">
                                     {{ $siswa->pluck('kelas_id')->unique()->count() }}
                                 </p>
