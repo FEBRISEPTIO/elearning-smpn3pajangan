@@ -21,7 +21,7 @@ class MataPelajaran extends Model
      */
     public function mapelKelas()
     {
-        return $this->hasMany(MapelKelas::class, 'mata_pelajaran_id');
+        return $this->hasMany(MapelKelas::class, 'mapel_id');
     }
 
     /**

@@ -52,7 +52,7 @@
         @if (session('success'))
             <div class="bg-green-50 border-l-4 border-green-500 p-4 mb-6">
                 <div class="flex">
-                    <div class="flex-shrink-0">
+                    <div class="shrink-0">
                         <i class="fas fa-check-circle text-green-500"></i>
                     </div>
                     <div class="ml-3">
@@ -65,7 +65,7 @@
         <!-- Main Content -->
         <div class="bg-white rounded-xl shadow-sm overflow-hidden">
             <!-- Header -->
-            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 border-b">
+            <div class="bg-linear-to-r from-blue-50 to-indigo-50 p-6 border-b">
                 <div class="flex flex-col md:flex-row md:items-start md:justify-between">
                     <div class="flex-1">
                         <div class="flex items-center mb-2">
@@ -228,7 +228,7 @@
                                 <div
                                     class="border border-gray-200 rounded-xl p-4 {{ $profile['type'] === 'guru' ? 'bg-blue-50' : 'bg-gray-50' }}">
                                     <div class="flex items-start">
-                                        <div class="flex-shrink-0 mr-4">
+                                        <div class="shrink-0 mr-4">
                                             <div
                                                 class="w-10 h-10 {{ $profile['type'] === 'guru' ? 'bg-blue-100' : 'bg-gray-100' }} rounded-full flex items-center justify-center">
                                                 <i
@@ -316,36 +316,6 @@
                     </span>
                 </div>
             </div>
-        </div>
-
-        <!-- Action Panel -->
-        <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-            <a href="{{ route('guru.tugas.edit', $tugas) }}"
-                class="bg-white border border-gray-200 rounded-xl p-6 text-center hover:bg-gray-50 transition">
-                <div class="text-yellow-500 text-3xl mb-3">
-                    <i class="fas fa-edit"></i>
-                </div>
-                <h4 class="font-medium text-gray-900">Edit Tugas</h4>
-                <p class="text-sm text-gray-500 mt-1">Ubah informasi tugas</p>
-            </a>
-
-            <a href="{{ route('guru.tugas.pengumpulan', $tugas) }}"
-                class="bg-white border border-gray-200 rounded-xl p-6 text-center hover:bg-gray-50 transition">
-                <div class="text-blue-500 text-3xl mb-3">
-                    <i class="fas fa-users"></i>
-                </div>
-                <h4 class="font-medium text-gray-900">Lihat Pengumpulan</h4>
-                <p class="text-sm text-gray-500 mt-1">Pantau hasil tugas siswa</p>
-            </a>
-
-            <a href="{{ route('guru.tugas.index') }}"
-                class="bg-white border border-gray-200 rounded-xl p-6 text-center hover:bg-gray-50 transition">
-                <div class="text-gray-500 text-3xl mb-3">
-                    <i class="fas fa-list"></i>
-                </div>
-                <h4 class="font-medium text-gray-900">Semua Tugas</h4>
-                <p class="text-sm text-gray-500 mt-1">Kembali ke daftar tugas</p>
-            </a>
         </div>
 
         <!-- Tips -->

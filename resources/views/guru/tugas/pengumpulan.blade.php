@@ -167,7 +167,7 @@
                                     <td class="px-6 py-4">
                                         <div class="flex items-center">
                                             <div
-                                                class="flex-shrink-0 h-10 w-10 bg-gray-100 rounded-full flex items-center justify-center mr-3">
+                                                class="shrink-0 h-10 w-10 bg-gray-100 rounded-full flex items-center justify-center mr-3">
                                                 <i class="fas fa-user-graduate text-gray-600"></i>
                                             </div>
                                             <div>
@@ -325,7 +325,7 @@
                             <div class="border border-gray-200 rounded-lg p-4">
                                 <div class="flex items-center">
                                     <div
-                                        class="flex-shrink-0 h-10 w-10 bg-gray-100 rounded-full flex items-center justify-center mr-3">
+                                        class="shrink-0 h-10 w-10 bg-gray-100 rounded-full flex items-center justify-center mr-3">
                                         <i class="fas fa-user text-gray-600"></i>
                                     </div>
                                     <div>
@@ -362,7 +362,7 @@
 
     <!-- Modal untuk Beri Nilai -->
     <div id="nilaiModal"
-        class="fixed inset-0 bg-gray-900 bg-opacity-75 z-50 hidden flex items-center justify-center p-4">
+        class="fixed inset-0 bg-gray-900 bg-opacity-75 z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl">
             <div class="mb-4">
                 <h3 class="text-lg font-semibold text-gray-900">Beri Nilai</h3>

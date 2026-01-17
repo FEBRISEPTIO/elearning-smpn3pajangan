@@ -58,10 +58,10 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/guru', [GuruController::class, 'index'])->name('guru.index');
         Route::get('/guru/create', [GuruController::class, 'create'])->name('guru.create');
         Route::post('/guru', [GuruController::class, 'store'])->name('guru.store');
-        Route::get('/guru/{guru}/edit', [GuruController::class, 'edit'])->name('guru.edit');
-        Route::put('/guru/{guru}', [GuruController::class, 'update'])->name('guru.update');
-        Route::delete('/guru/{guru}', [GuruController::class, 'destroy'])->name('guru.destroy');
-        Route::post('/guru/{guru}/reset-password', [GuruController::class, 'resetPassword'])->name('guru.reset-password');
+        Route::get('/guru/{nik}/edit', [GuruController::class, 'edit'])->name('guru.edit');
+        Route::put('/guru/{nik}', [GuruController::class, 'update'])->name('guru.update');
+        Route::delete('/guru/{nik}', [GuruController::class, 'destroy'])->name('guru.destroy');
+        Route::post('/guru/{nik}/reset-password', [GuruController::class, 'resetPassword'])->name('guru.reset-password');
 
         // Manajemen Kelas
         Route::resource('kelas', KelasController::class)->except(['show']);

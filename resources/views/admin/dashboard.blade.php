@@ -65,7 +65,7 @@
             <!-- Stats Cards -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 <!-- Total Siswa -->
-                <div class="bg-linear-to-br from-blue-500 to-blue-600 text-white rounded-xl p-5 shadow-lg">
+                <div class="bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-xl p-5 shadow-lg">
                     <div class="flex items-center">
                         <div class="bg-white/20 p-3 rounded-full mr-4">
                             <i class="fas fa-users text-xl"></i>
@@ -82,7 +82,7 @@
                 </div>
 
                 <!-- Total Guru -->
-                <div class="bg-linear-to-br from-green-500 to-green-600 text-white rounded-xl p-5 shadow-lg">
+                <div class="bg-gradient-to-br from-green-500 to-green-600 text-white rounded-xl p-5 shadow-lg">
                     <div class="flex items-center">
                         <div class="bg-white/20 p-3 rounded-full mr-4">
                             <i class="fas fa-chalkboard-teacher text-xl"></i>
@@ -99,7 +99,7 @@
                 </div>
 
                 <!-- Total Kelas -->
-                <div class="bg-linear-to-br from-purple-500 to-purple-600 text-white rounded-xl p-5 shadow-lg">
+                <div class="bg-gradient-to-br from-purple-500 to-purple-600 text-white rounded-xl p-5 shadow-lg">
                     <div class="flex items-center">
                         <div class="bg-white/20 p-3 rounded-full mr-4">
                             <i class="fas fa-school text-xl"></i>
@@ -116,7 +116,7 @@
                 </div>
 
                 <!-- Total Mapel -->
-                <div class="bg-linear-to-br from-amber-500 to-amber-600 text-white rounded-xl p-5 shadow-lg">
+                <div class="bg-gradient-to-br from-amber-500 to-amber-600 text-white rounded-xl p-5 shadow-lg">
                     <div class="flex items-center">
                         <div class="bg-white/20 p-3 rounded-full mr-4">
                             <i class="fas fa-book text-xl"></i>

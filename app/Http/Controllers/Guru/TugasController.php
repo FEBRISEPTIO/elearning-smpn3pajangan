@@ -106,30 +106,36 @@ class TugasController extends Controller
     }
 
     public function show($id)
-    {
-        $user = Auth::user();
+{
 
-        if ($user->user_type !== 'guru') {
-            abort(403, 'Hanya guru yang dapat mengakses');
-        }
 
-        // Cari tugas
-        $tugas = Tugas::withCount('komentar')->find($id);
+    // Cari tugas dengan relasi
+    $tugas = Tugas::with(['kelas', 'mataPelajaran'])
+        ->withCount('komentar')
+        ->find($id);
 
-        if (!$tugas) {
-            abort(404, 'Tugas tidak ditemukan');
-        }
-
-        // Gunakan withCount() untuk menghitung komentar - SAMA SEPERTI MATERI
-        $tugas = Tugas::withCount('komentar')->find($tugas->id);
-
-        // Query komentar untuk ditampilkan - SAMA SEPERTI MATERI (tapi untuk tugas)
-        $komentars = Komentar::where('tugas_id', $tugas->id)
-            ->orderBy('created_at', 'desc')
-            ->paginate(10);
-
-        return view('guru.tugas.show', compact('tugas', 'komentars'));
+    if (!$tugas) {
+        abort(404, 'Tugas tidak ditemukan');
     }
+
+    // Authorization check - INI YANG TIDAK ADA SEBELUMNYA
+    $guru = Auth::user()->guru;
+    
+    if (!$guru) {
+        abort(403, 'Data guru tidak ditemukan');
+    }
+
+    if ($guru->nik != $tugas->guru_nik) {
+        abort(403, 'ANDA TIDAK MEMILIKI AKSES KE TUGAS INI');
+    }
+
+    // Query komentar
+    $komentars = Komentar::where('tugas_id', $tugas->id)
+        ->orderBy('created_at', 'desc')
+        ->paginate(10);
+
+    return view('guru.tugas.show', compact('tugas', 'komentars'));
+}
 
     public function edit(Tugas $tugas)
     {

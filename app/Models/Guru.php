@@ -10,7 +10,7 @@ class Guru extends Model
     use HasFactory;
 
     protected $table = 'guru'; // Explicitly set table name
-    protected $primaryKey = 'id';
+    protected $primaryKey = 'nik';
 
     protected $fillable = [
         'user_id',
@@ -22,10 +22,15 @@ class Guru extends Model
         'foto'
     ];
 
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
+    
+    public function akun()
+{
+    return $this->belongsTo(Akun::class, 'nik', 'user_id');
+}
+    // public function user()
+    // {
+    //     return $this->belongsTo(User::class);
+    // }
 
     public function mapelKelas()
     {

@@ -7,40 +7,12 @@
     <title>Edit Guru - E-Learning</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        /* Sidebar responsive */
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-
-            .sidebar-open {
-                transform: translateX(0);
-            }
-
-            .overlay {
-                display: none;
-            }
-
-            .overlay-active {
-                display: block;
-                position: fixed;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: rgba(0, 0, 0, 0.5);
-                z-index: 40;
-            }
-        }
-    </style>
 </head>
 
 <body class="bg-gray-100 min-h-screen">
     @include('admin.partials.header')
 
-    <!-- Main Content -->
-    <main class="md:ml-64 min-h-screen p-4 md:p-6 transition-all duration-300">
+    <main class="md:ml-64 min-h-screen p-4 md:p-6">
         <div class="bg-white rounded-xl shadow-sm p-6">
             <!-- Header -->
             <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-6">
@@ -53,6 +25,19 @@
                     <i class="fas fa-arrow-left mr-2"></i>Kembali
                 </a>
             </div>
+
+            @if (session('success'))
+                <div class="bg-green-50 border-l-4 border-green-500 p-4 mb-6">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-check-circle text-green-500"></i>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm font-medium text-green-800">{{ session('success') }}</p>
+                        </div>
+                    </div>
+                </div>
+            @endif
 
             @if ($errors->any())
                 <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-6">
@@ -74,21 +59,19 @@
                 </div>
             @endif
 
-            <!-- Form -->
+            <!-- Form Update -->
             <form action="{{ route('admin.guru.update', $guru->nik) }}" method="POST">
                 @csrf
                 @method('PUT')
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     <!-- Kolom 1 -->
                     <div class="space-y-4">
                         <!-- NIK (readonly) -->
                         <div>
-                            <label for="nik" class="block text-sm font-medium text-gray-700 mb-1">
-                                NIK
-                            </label>
+                            <label for="nik" class="block text-sm font-medium text-gray-700 mb-1">NIK</label>
                             <input type="text" id="nik" value="{{ $guru->nik }}" readonly
-                                class="w-full px-4 py-2 border border-gray-300 bg-gray-50 rounded-lg" placeholder="NIK">
-                            <p class="mt-1 text-xs text-gray-500">NIK tidak dapat diubah</p>
+                                class="w-full px-4 py-2 border border-gray-300 bg-gray-50 rounded-lg">
                         </div>
 
                         <!-- Nama -->
@@ -98,8 +81,7 @@
                             </label>
                             <input type="text" id="nama" name="nama" value="{{ old('nama', $guru->nama) }}"
                                 required
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-                                placeholder="Masukkan nama lengkap">
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                         </div>
 
                         <!-- Email -->
@@ -109,8 +91,7 @@
                             </label>
                             <input type="email" id="email" name="email" value="{{ old('email', $guru->email) }}"
                                 required
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-                                placeholder="nama@email.com">
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                         </div>
                     </div>
 
@@ -144,20 +125,16 @@
                             </label>
                             <input type="text" id="no_telp" name="no_telp"
                                 value="{{ old('no_telp', $guru->no_telp) }}"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-                                placeholder="08xxxxxxxxxx">
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                         </div>
                     </div>
                 </div>
 
                 <!-- Alamat -->
                 <div class="mb-6">
-                    <label for="alamat" class="block text-sm font-medium text-gray-700 mb-1">
-                        Alamat
-                    </label>
+                    <label for="alamat" class="block text-sm font-medium text-gray-700 mb-1">Alamat</label>
                     <textarea id="alamat" name="alamat" rows="3"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-                        placeholder="Masukkan alamat lengkap">{{ old('alamat', $guru->alamat) }}</textarea>
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">{{ old('alamat', $guru->alamat) }}</textarea>
                 </div>
 
                 <!-- Info Login -->
@@ -179,15 +156,17 @@
 
                 <!-- Action Buttons -->
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pt-4 border-t">
-                    <!-- Reset Password Form -->
-                    <form action="{{ route('admin.guru.reset-password', $guru->nik) }}" method="POST"
-                        class="w-full md:w-auto">
+                    <!-- Reset Password Button -->
+                    <button type="button"
+                        onclick="if(confirm('Reset password ke NIK?')) document.getElementById('reset-form').submit();"
+                        class="bg-amber-600 hover:bg-amber-700 text-white px-6 py-3 rounded-lg text-sm font-medium inline-flex items-center transition w-full md:w-auto justify-center">
+                        <i class="fas fa-key mr-2"></i>Reset Password
+                    </button>
+
+                    <!-- Form reset password terpisah -->
+                    <form id="reset-form" action="{{ route('admin.guru.reset-password', $guru->nik) }}" method="POST"
+                        class="hidden">
                         @csrf
-                        <button type="submit"
-                            class="bg-amber-600 hover:bg-amber-700 text-white px-6 py-3 rounded-lg text-sm font-medium inline-flex items-center transition w-full md:w-auto justify-center"
-                            onclick="return confirm('Reset password ke NIK?')">
-                            <i class="fas fa-key mr-2"></i>Reset Password
-                        </button>
                     </form>
 
                     <!-- Action Buttons -->
@@ -205,7 +184,6 @@
             </form>
         </div>
     </main>
-
 </body>
 
 </html>
