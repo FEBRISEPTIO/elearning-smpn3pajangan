@@ -7,92 +7,166 @@
     <title>Data Nilai Siswa - E-Learning</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Sidebar responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar-open {
+                transform: translateX(0);
+            }
+
+            .overlay {
+                display: none;
+            }
+
+            .overlay-active {
+                display: block;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 40;
+            }
+        }
+    </style>
 </head>
 
-<body class="bg-gray-100">
+<body class="bg-gray-100 min-h-screen">
     @include('guru.partials.header')
 
-    <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div class="px-4 py-6 sm:px-0">
+    <!-- Main Content -->
+    <main class="md:ml-64 min-h-screen p-4 md:p-6 transition-all duration-300">
+        <div class="bg-white rounded-xl shadow-sm p-6">
             <!-- Header -->
-            <div class="mb-8">
-                <h1 class="text-3xl font-bold text-gray-900 mb-2">Data Nilai Siswa</h1>
-                <p class="text-gray-600">Kelola dan pantau nilai siswa</p>
+            <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-6">
+                <div>
+                    <h1 class="text-2xl md:text-3xl font-bold text-gray-900">
+                        <i class="fas fa-chart-bar mr-2"></i>
+                        Data Nilai Siswa
+                    </h1>
+                    <p class="text-gray-600 mt-1">
+                        Kelola dan pantau nilai siswa berdasarkan tugas yang diberikan
+                    </p>
+                </div>
+                <a href="{{ route('guru.tugas.index') }}"
+                    class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium inline-flex items-center transition">
+                    <i class="fas fa-tasks mr-2"></i>Lihat Tugas
+                </a>
             </div>
 
             @if (session('success'))
-                <div class="mb-6 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg"
-                    role="alert">
-                    <div class="flex items-center">
-                        <i class="fas fa-check-circle mr-2"></i>
-                        <span>{{ session('success') }}</span>
+                <div class="bg-green-50 border-l-4 border-green-500 p-4 mb-6">
+                    <div class="flex">
+                        <div class="shrink-0">
+                            <i class="fas fa-check-circle text-green-500"></i>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm text-green-700">{{ session('success') }}</p>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
+            @if (session('error'))
+                <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-6">
+                    <div class="flex">
+                        <div class="shrink-0">
+                            <i class="fas fa-exclamation-circle text-red-500"></i>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm text-red-700">{{ session('error') }}</p>
+                        </div>
                     </div>
                 </div>
             @endif
 
             <!-- Filter Controls -->
-            <div class="bg-white rounded-lg shadow p-6 mb-6">
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="bg-gray-50 border border-gray-200 rounded-xl p-6 mb-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Filter Data Nilai</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Kelas</label>
-                        <select id="kelasFilter"
-                            class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500">
+                        <select id="filter_kelas" onchange="filterNilai()"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
                             <option value="">Semua Kelas</option>
                             @foreach ($kelas as $kelasItem)
-                                <option value="{{ $kelasItem->id }}">{{ $kelasItem->nama_kelas }}</option>
+                                <option value="{{ $kelasItem->id }}"
+                                    {{ request('kelas_id') == $kelasItem->id ? 'selected' : '' }}>
+                                    {{ $kelasItem->kelas ?? $kelasItem->nama_kelas }}
+                                </option>
                             @endforeach
                         </select>
                     </div>
+
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Jenis Nilai</label>
-                        <select id="jenisFilter"
-                            class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500">
-                            <option value="">Semua Jenis</option>
-                            <option value="materi">Materi</option>
-                            <option value="tugas">Tugas</option>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Status Nilai</label>
+                        <select id="filter_status" onchange="filterNilai()"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+                            <option value="">Semua Status</option>
+                            <option value="tuntas" {{ request('status') == 'tuntas' ? 'selected' : '' }}>Tuntas</option>
+                            <option value="remedial" {{ request('status') == 'remedial' ? 'selected' : '' }}>Remedial
+                            </option>
+                            <option value="belum" {{ request('status') == 'belum' ? 'selected' : '' }}>Belum Dinilai
+                            </option>
                         </select>
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Rentang Nilai</label>
-                        <select id="rangeFilter"
-                            class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500">
-                            <option value="">Semua</option>
-                            <option value="0-50">0 - 50</option>
-                            <option value="51-70">51 - 70</option>
-                            <option value="71-85">71 - 85</option>
-                            <option value="86-100">86 - 100</option>
-                        </select>
-                    </div>
-                    <div class="flex items-end">
-                        <button onclick="filterNilai()"
-                            class="w-full bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700">
-                            <i class="fas fa-filter mr-2"></i> Filter
-                        </button>
+
+                    <div class="flex items-end space-x-2">
+                        <a href="{{ route('guru.nilai.index') }}"
+                            class="w-full bg-gray-600 hover:bg-gray-700 text-white px-4 py-3 rounded-lg text-sm font-medium inline-flex items-center justify-center transition">
+                            <i class="fas fa-redo mr-2"></i> Reset Filter
+                        </a>
                     </div>
                 </div>
             </div>
 
             <!-- Summary Stats -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <div class="bg-white rounded-lg shadow p-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
                     <div class="flex items-center">
-                        <div class="bg-purple-100 p-3 rounded-lg mr-4">
-                            <i class="fas fa-users text-purple-600 text-xl"></i>
+                        <div class="bg-blue-100 p-3 rounded-lg mr-4">
+                            <i class="fas fa-users text-blue-600 text-xl"></i>
                         </div>
                         <div>
                             <p class="text-sm text-gray-500">Total Siswa</p>
-                            <p class="text-2xl font-bold">{{ $siswa->count() ?? 0 }}</p>
+                            <p class="text-2xl font-bold text-gray-900">{{ $siswa->count() ?? 0 }}</p>
                         </div>
                     </div>
                 </div>
-                <div class="bg-white rounded-lg shadow p-6">
+
+                <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
                     <div class="flex items-center">
-                        <div class="bg-blue-100 p-3 rounded-lg mr-4">
-                            <i class="fas fa-chart-bar text-blue-600 text-xl"></i>
+                        <div class="bg-green-100 p-3 rounded-lg mr-4">
+                            <i class="fas fa-tasks text-green-600 text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500">Total Tugas</p>
+                            <p class="text-2xl font-bold text-gray-900">
+                                @php
+                                    $totalTugas = 0;
+                                    foreach ($siswa as $s) {
+                                        $totalTugas += $s->nilai->unique('tugas_id')->count();
+                                    }
+                                @endphp
+                                {{ $totalTugas }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+                    <div class="flex items-center">
+                        <div class="bg-amber-100 p-3 rounded-lg mr-4">
+                            <i class="fas fa-chart-line text-amber-600 text-xl"></i>
                         </div>
                         <div>
                             <p class="text-sm text-gray-500">Rata-rata Nilai</p>
-                            <p class="text-2xl font-bold">
+                            <p class="text-2xl font-bold text-gray-900">
                                 @php
                                     $totalNilai = 0;
                                     $countNilai = 0;
@@ -109,14 +183,15 @@
                         </div>
                     </div>
                 </div>
-                <div class="bg-white rounded-lg shadow p-6">
+
+                <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
                     <div class="flex items-center">
-                        <div class="bg-green-100 p-3 rounded-lg mr-4">
-                            <i class="fas fa-check-circle text-green-600 text-xl"></i>
+                        <div class="bg-purple-100 p-3 rounded-lg mr-4">
+                            <i class="fas fa-check-circle text-purple-600 text-xl"></i>
                         </div>
                         <div>
-                            <p class="text-sm text-gray-500">Nilai Tuntas</p>
-                            <p class="text-2xl font-bold">
+                            <p class="text-sm text-gray-500">Siswa Tuntas</p>
+                            <p class="text-2xl font-bold text-gray-900">
                                 @php
                                     $tuntas = 0;
                                     foreach ($siswa as $s) {
@@ -134,7 +209,18 @@
             </div>
 
             <!-- Students Table -->
-            <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+            <div class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden mb-8">
+                <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                        <h3 class="text-lg font-semibold text-gray-900">
+                            <i class="fas fa-list-ol mr-2"></i>Daftar Nilai Siswa
+                        </h3>
+                        <div class="mt-2 md:mt-0 text-sm text-gray-600">
+                            Menampilkan {{ $siswa->count() }} siswa
+                        </div>
+                    </div>
+                </div>
+
                 @if ($siswa && $siswa->count() > 0)
                     <div class="overflow-x-auto">
                         <table class="min-w-full divide-y divide-gray-200">
@@ -142,31 +228,27 @@
                                 <tr>
                                     <th scope="col"
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Siswa
+                                        <i class="fas fa-user-graduate mr-1"></i> Siswa
                                     </th>
                                     <th scope="col"
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Kelas
+                                        <i class="fas fa-school mr-1"></i> Kelas
                                     </th>
                                     <th scope="col"
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Rata-rata Nilai
+                                        <i class="fas fa-tasks mr-1"></i> Jumlah Tugas
                                     </th>
                                     <th scope="col"
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Nilai Tertinggi
+                                        <i class="fas fa-chart-line mr-1"></i> Rata-rata
                                     </th>
                                     <th scope="col"
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Nilai Terendah
+                                        <i class="fas fa-info-circle mr-1"></i> Status
                                     </th>
                                     <th scope="col"
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Status
-                                    </th>
-                                    <th scope="col"
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Aksi
+                                        <i class="fas fa-cog mr-1"></i> Aksi
                                     </th>
                                 </tr>
                             </thead>
@@ -174,17 +256,17 @@
                                 @foreach ($siswa as $item)
                                     @php
                                         $nilaiSiswa = $item->nilai;
+                                        $jumlahTugas = $nilaiSiswa->unique('tugas_id')->count();
                                         $rataRata = $nilaiSiswa->avg('nilai') ?? 0;
-                                        $nilaiTertinggi = $nilaiSiswa->max('nilai') ?? 0;
-                                        $nilaiTerendah = $nilaiSiswa->min('nilai') ?? 0;
                                         $isTuntas = $rataRata >= 75;
+                                        $tugasIds = $nilaiSiswa->pluck('tugas_id')->unique();
                                     @endphp
-                                    <tr class="hover:bg-gray-50">
+                                    <tr class="hover:bg-gray-50 transition">
                                         <td class="px-6 py-4">
                                             <div class="flex items-center">
                                                 <div
-                                                    class="flex-shrink-0 h-10 w-10 bg-purple-100 rounded-full flex items-center justify-center mr-3">
-                                                    <i class="fas fa-user-graduate text-purple-600"></i>
+                                                    class="flex-shrink-0 h-10 w-10 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                                                    <i class="fas fa-user text-blue-600"></i>
                                                 </div>
                                                 <div>
                                                     <div class="text-sm font-medium text-gray-900">
@@ -198,15 +280,21 @@
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <span
-                                                class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
-                                                {{ $item->kelas->nama_kelas ?? 'N/A' }}
+                                                class="px-3 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">
+                                                {{ $item->kelas->nama_kelas ?? $item->kelas->kelas }}
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span
+                                                class="px-3 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-800">
+                                                {{ $jumlahTugas }} Tugas
                                             </span>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <div class="flex items-center">
                                                 <div class="w-24 bg-gray-200 rounded-full h-2 mr-3">
-                                                    <div class="bg-purple-600 h-2 rounded-full"
-                                                        style="width: {{ $rataRata }}%"></div>
+                                                    <div class="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                                                        style="width: {{ min($rataRata, 100) }}%"></div>
                                                 </div>
                                                 <span
                                                     class="font-bold {{ $rataRata >= 75 ? 'text-green-600' : 'text-red-600' }}">
@@ -214,44 +302,38 @@
                                                 </span>
                                             </div>
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                            <span
-                                                class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                                                {{ $nilaiTertinggi }}
-                                            </span>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                            <span
-                                                class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">
-                                                {{ $nilaiTerendah }}
-                                            </span>
-                                        </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
-                                            @if ($isTuntas)
-                                                <span
-                                                    class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                                    <i class="fas fa-check mr-1"></i> Tuntas
-                                                </span>
+                                            @if ($jumlahTugas > 0)
+                                                @if ($isTuntas)
+                                                    <span
+                                                        class="px-3 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800 inline-flex items-center">
+                                                        <i class="fas fa-check mr-1"></i> Tuntas
+                                                    </span>
+                                                @else
+                                                    <span
+                                                        class="px-3 py-1 text-xs font-medium rounded-full bg-amber-100 text-amber-800 inline-flex items-center">
+                                                        <i class="fas fa-exclamation mr-1"></i> Remedial
+                                                    </span>
+                                                @endif
                                             @else
                                                 <span
-                                                    class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                                                    <i class="fas fa-exclamation mr-1"></i> Remedial
+                                                    class="px-3 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-800 inline-flex items-center">
+                                                    <i class="fas fa-clock mr-1"></i> Belum Dinilai
                                                 </span>
                                             @endif
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                             <div class="flex space-x-2">
                                                 <a href="{{ route('guru.nilai.show', $item->id) }}"
-                                                    class="text-blue-600 hover:text-blue-900 px-3 py-1 rounded-lg border border-blue-200 hover:bg-blue-50"
+                                                    class="text-blue-600 hover:text-blue-900 px-3 py-2 rounded-lg border border-blue-200 hover:bg-blue-50 transition inline-flex items-center"
                                                     title="Detail Nilai">
                                                     <i class="fas fa-eye mr-1"></i> Detail
                                                 </a>
-                                                <button
-                                                    onclick="showAddNilaiModal('{{ $item->id }}', '{{ $item->nama }}')"
-                                                    class="text-green-600 hover:text-green-900 px-3 py-1 rounded-lg border border-green-200 hover:bg-green-50"
+                                                <a href="{{ route('guru.nilai.byKelas', $item->kelas_id) }}?siswa_id={{ $item->id }}"
+                                                    class="text-green-600 hover:text-green-900 px-3 py-2 rounded-lg border border-green-200 hover:bg-green-50 transition inline-flex items-center"
                                                     title="Tambah Nilai">
                                                     <i class="fas fa-plus mr-1"></i> Nilai
-                                                </button>
+                                                </a>
                                             </div>
                                         </td>
                                     </tr>
@@ -261,132 +343,102 @@
                     </div>
                 @else
                     <div class="text-center py-12">
-                        <div class="text-gray-400 mb-4">
-                            <i class="fas fa-user-graduate text-6xl"></i>
+                        <div class="text-gray-300 mb-4">
+                            <i class="fas fa-chart-bar text-6xl"></i>
                         </div>
-                        <h3 class="text-lg font-medium text-gray-900 mb-2">Belum ada data siswa</h3>
-                        <p class="text-gray-600 mb-6">Siswa akan muncul setelah terdaftar di kelas yang Anda ajar.</p>
+                        <h3 class="text-lg font-medium text-gray-900 mb-2">Belum ada data nilai</h3>
+                        <p class="text-gray-600 mb-6">Mulai dengan membuat tugas terlebih dahulu.</p>
+                        <div class="space-x-3">
+                            <a href="{{ route('guru.tugas.create') }}"
+                                class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                                <i class="fas fa-plus mr-2"></i> Buat Tugas
+                            </a>
+                        </div>
                     </div>
                 @endif
             </div>
 
-            <!-- Nilai Charts (Optional) -->
-            <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div class="bg-white shadow rounded-lg p-6">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Distribusi Nilai</h3>
-                    <div class="h-64 flex items-center justify-center">
-                        <p class="text-gray-500">Chart distribusi nilai akan muncul di sini</p>
+            <!-- Kelas yang Diajar -->
+            <div class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden mb-8">
+                <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
+                    <h3 class="text-lg font-semibold text-gray-900">
+                        <i class="fas fa-school mr-2"></i>Kelas yang Diajar
+                    </h3>
+                </div>
+                <div class="p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        @foreach ($kelas as $kelasItem)
+                            @php
+                                $siswaKelas = $siswa->where('kelas_id', $kelasItem->id);
+                                $rataKelas = $siswaKelas->flatMap->nilai->avg('nilai') ?? 0;
+                                $tuntasKelas = $siswaKelas
+                                    ->filter(function ($s) {
+                                        return $s->nilai->avg('nilai') >= 75;
+                                    })
+                                    ->count();
+                            @endphp
+                            <a href="{{ route('guru.nilai.byKelas', $kelasItem->id) }}"
+                                class="block p-6 border border-gray-200 rounded-xl hover:border-blue-300 hover:shadow-md transition">
+                                <div class="flex items-center justify-between mb-4">
+                                    <div>
+                                        <h4 class="font-semibold text-gray-900">
+                                            {{ $kelasItem->kelas ?? $kelasItem->nama_kelas }}</h4>
+                                        <p class="text-sm text-gray-600">{{ $siswaKelas->count() }} siswa</p>
+                                    </div>
+                                    <div class="text-right">
+                                        <span
+                                            class="text-2xl font-bold {{ $rataKelas >= 75 ? 'text-green-600' : 'text-red-600' }}">
+                                            {{ round($rataKelas, 2) }}
+                                        </span>
+                                        <p class="text-xs text-gray-500">Rata-rata</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-green-600">
+                                        <i class="fas fa-check-circle mr-1"></i> {{ $tuntasKelas }} tuntas
+                                    </span>
+                                    <span class="text-amber-600">
+                                        <i class="fas fa-user-graduate mr-1"></i>
+                                        {{ $siswaKelas->count() - $tuntasKelas }} remedial
+                                    </span>
+                                </div>
+                            </a>
+                        @endforeach
                     </div>
                 </div>
-                <div class="bg-white shadow rounded-lg p-6">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Top 5 Siswa</h3>
-                    <div class="space-y-3">
-                        @php
-                            $topSiswa = $siswa
-                                ->sortByDesc(function ($s) {
-                                    return $s->nilai->avg('nilai') ?? 0;
-                                })
-                                ->take(5);
-                        @endphp
-                        @foreach ($topSiswa as $index => $siswaItem)
-                            @php
-                                $rata = $siswaItem->nilai->avg('nilai') ?? 0;
-                            @endphp
-                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                                <div class="flex items-center">
-                                    <div
-                                        class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center mr-3">
-                                        <span class="font-bold text-purple-600">{{ $index + 1 }}</span>
-                                    </div>
-                                    <div>
-                                        <p class="font-medium">{{ $siswaItem->nama }}</p>
-                                        <p class="text-xs text-gray-600">{{ $siswaItem->kelas->nama_kelas ?? 'N/A' }}
-                                        </p>
-                                    </div>
-                                </div>
-                                <div class="text-right">
-                                    <p class="font-bold text-purple-600">{{ round($rata, 2) }}</p>
-                                    <p class="text-xs text-gray-500">Rata-rata</p>
-                                </div>
-                            </div>
-                        @endforeach
+            </div>
+
+            <!-- Tips Section -->
+            <div class="mt-6 bg-blue-50 border border-blue-200 rounded-xl p-6">
+                <div class="flex items-start">
+                    <i class="fas fa-lightbulb text-amber-500 mt-1 mr-3"></i>
+                    <div>
+                        <h4 class="text-sm font-semibold text-blue-800 mb-2">Panduan Pengelolaan Nilai:</h4>
+                        <ul class="text-sm text-blue-700 space-y-1">
+                            <li>• Nilai diberikan berdasarkan tugas yang telah dibuat</li>
+                            <li>• Klik "Detail" untuk melihat nilai per tugas siswa</li>
+                            <li>• Klik "Nilai" untuk memberikan nilai pada tugas tertentu</li>
+                            <li>• Pilih kelas untuk melihat nilai siswa dalam kelas tersebut</li>
+                            <li>• Gunakan filter untuk mencari siswa dengan status tertentu</li>
+                        </ul>
                     </div>
                 </div>
             </div>
         </div>
     </main>
 
-    <!-- Add Nilai Modal -->
-    <div id="addNilaiModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden overflow-y-auto h-full w-full z-50">
-        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
-            <div class="mt-3">
-                <h3 class="text-lg font-medium leading-6 text-gray-900 mb-4" id="modalTitle">Tambah Nilai</h3>
-                <form id="addNilaiForm" method="POST">
-                    @csrf
-                    <input type="hidden" id="siswa_id" name="siswa_id">
-
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Jenis Nilai</label>
-                        <select name="jenis" required
-                            class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500">
-                            <option value="">Pilih Jenis</option>
-                            <option value="materi">Materi</option>
-                            <option value="tugas">Tugas</option>
-                        </select>
-                    </div>
-
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Nilai</label>
-                        <input type="number" name="nilai" min="0" max="100" step="0.1" required
-                            class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500"
-                            placeholder="0-100">
-                    </div>
-
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Keterangan</label>
-                        <textarea name="keterangan" rows="3"
-                            class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500"
-                            placeholder="Opsional"></textarea>
-                    </div>
-
-                    <div class="flex justify-end space-x-3 mt-6">
-                        <button type="button" onclick="hideAddNilaiModal()"
-                            class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg">
-                            Batal
-                        </button>
-                        <button type="submit"
-                            class="px-4 py-2 text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 rounded-lg">
-                            Simpan
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
     <script>
-        function showAddNilaiModal(siswaId, siswaNama) {
-            document.getElementById('siswa_id').value = siswaId;
-            document.getElementById('modalTitle').textContent = 'Tambah Nilai - ' + siswaNama;
-            document.getElementById('addNilaiForm').action = `/guru/nilai/${siswaId}`;
-            document.getElementById('addNilaiModal').classList.remove('hidden');
-        }
-
-        function hideAddNilaiModal() {
-            document.getElementById('addNilaiModal').classList.add('hidden');
-        }
-
         function filterNilai() {
-            const kelas = document.getElementById('kelasFilter').value;
-            const jenis = document.getElementById('jenisFilter').value;
-            const range = document.getElementById('rangeFilter').value;
+            const kelas = document.getElementById('filter_kelas').value;
+            const status = document.getElementById('filter_status').value;
 
-            // Implement filter logic here
-            console.log('Filtering:', {
-                kelas,
-                jenis,
-                range
-            });
+            let params = new URLSearchParams();
+
+            if (kelas) params.append('kelas_id', kelas);
+            if (status) params.append('status', status);
+
+            const queryString = params.toString();
+            window.location.href = window.location.pathname + (queryString ? '?' + queryString : '');
         }
     </script>
 </body>

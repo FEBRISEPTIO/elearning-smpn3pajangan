@@ -176,7 +176,7 @@
                     <h3 class="text-lg font-semibold text-gray-900 mb-4">Informasi Deadline</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div
-                            class="bg-white border {{ $isDeadlinePassed ? 'border-red-200 bg-red-50' : 'border-blue-200 bg-blue-50' }} rounded-xl p-6">
+                            class="bg-white border {{ $isDeadlinePassed ? 'border-red-200 bg-red-60' : 'border-blue-200 bg-blue-50' }} rounded-xl p-6">
                             <div class="flex items-center mb-2">
                                 <div
                                     class="w-8 h-8 {{ $isDeadlinePassed ? 'bg-red-100' : 'bg-blue-100' }} rounded-full flex items-center justify-center mr-3">
@@ -192,7 +192,7 @@
                         </div>
 
                         <div
-                            class="bg-white border {{ $isDeadlinePassed ? 'border-red-200 bg-red-50' : 'border-green-200 bg-green-50' }} rounded-xl p-6">
+                            class="bg-white border {{ $isDeadlinePassed ? 'border-red-200 bg-red-60' : 'border-green-200 bg-green-60' }} rounded-xl p-6">
                             <div class="flex items-center mb-2">
                                 <div
                                     class="w-8 h-8 {{ $isDeadlinePassed ? 'bg-red-100' : 'bg-green-100' }} rounded-full flex items-center justify-center mr-3">
@@ -220,7 +220,7 @@
 
                 <!-- Form Pengumpulan Tugas -->
                 @if (!$isDeadlinePassed)
-                    <div class="mb-8 bg-green-50 border border-green-200 rounded-xl p-6">
+                    <div class="mb-8 bg-green-60 border border-green-210 rounded-xl p-6">
                         <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                             <i class="fas fa-upload mr-2"></i> Kumpulkan Tugas
                         </h3>
@@ -292,7 +292,7 @@
                         @endif
                     </div>
                 @else
-                    <div class="mb-8 bg-red-50 border border-red-200 rounded-xl p-6">
+                    <div class="mb-8 bg-red-60 border border-red-200 rounded-xl p-6">
                         <div class="flex items-center">
                             <i class="fas fa-exclamation-triangle text-red-500 text-xl mr-3"></i>
                             <div>
@@ -395,7 +395,7 @@
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="submit"
-                                                            class="text-red-500 hover:text-red-700 p-1 hover:bg-red-50 rounded">
+                                                            class="text-red-500 hover:text-red-700 p-1 hover:bg-red-60 rounded">
                                                             <i class="fas fa-trash"></i>
                                                         </button>
                                                     </form>

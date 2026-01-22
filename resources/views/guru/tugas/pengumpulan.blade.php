@@ -83,7 +83,7 @@
                 </div>
             </div>
 
-            <div class="bg-green-50 border border-green-200 rounded-xl p-4">
+            <div class="bg-green-60 border border-green-210 rounded-xl p-4">
                 <div class="flex items-center">
                     <div class="bg-green-100 rounded-full p-3 mr-4">
                         <i class="fas fa-check-circle text-green-600"></i>
@@ -262,7 +262,7 @@
                                             @endif
 
                                             <button onclick="openNilaiModal({{ $item->id }})"
-                                                class="text-green-600 hover:text-green-900 p-2 hover:bg-green-50 rounded"
+                                                class="text-green-600 hover:text-green-900 p-2 hover:bg-green-60 rounded"
                                                 title="Beri Nilai">
                                                 <i class="fas fa-edit"></i>
                                             </button>

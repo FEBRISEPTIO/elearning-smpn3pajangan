@@ -45,7 +45,7 @@
         <!-- Header -->
         <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-6">
             <div>
-                <h1 class="text-2xl md:text-3xl font-bold text-gray-900">Nilai & Rapor</h1>
+                <h1 class="text-2xl md:text-3xl font-bold text-gray-900">Nilai</h1>
                 <p class="text-gray-600 mt-1">Lihat nilai tugas yang sudah dinilai oleh guru</p>
             </div>
             <a href="{{ route('siswa.dashboard') }}"

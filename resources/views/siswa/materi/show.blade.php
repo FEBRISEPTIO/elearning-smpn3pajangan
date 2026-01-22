@@ -44,7 +44,7 @@
         <!-- Back Button -->
         <div class="mb-6">
             <a href="{{ route('siswa.materi.index') }}"
-                class="inline-flex items-center text-blue-600 hover:text-blue-800">
+                class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg text-sm font-medium inline-flex items-center transition">
                 <i class="fas fa-arrow-left mr-2"></i> Kembali ke Daftar Materi
             </a>
         </div>

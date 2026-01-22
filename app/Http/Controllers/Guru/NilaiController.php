@@ -19,16 +19,45 @@ class NilaiController extends Controller
         $guru = Auth::user()->guru;
 
         // Ambil kelas yang diampu
-        $kelasList = $guru->mapelKelas->map(function ($item) {
+        $kelas = $guru->mapelKelas->map(function ($item) {
             return $item->kelas;
         })->unique();
 
-        // Ambil mata pelajaran yang diampu
-        $mapelList = $guru->mapelKelas->map(function ($item) {
-            return $item->mataPelajaran;
-        })->unique();
+        // Query siswa dengan filter
+        $query = Siswa::whereIn('kelas_id', $kelas->pluck('id'))
+            ->with(['nilai.tugas', 'kelas']);
 
-        return view('guru.nilai.index', compact('kelasList', 'mapelList'));
+        // Filter berdasarkan kelas
+        if (request('kelas_id')) {
+            $query->where('kelas_id', request('kelas_id'));
+        }
+
+        $siswa = $query->get();
+
+        // Filter berdasarkan status jika ada
+        if (request('status')) {
+            $siswa = $siswa->filter(function ($s) {
+                $rataRata = $s->nilai->avg('nilai') ?? 0;
+
+                switch (request('status')) {
+                    case 'tuntas':
+                        return $rataRata >= 75;
+                    case 'remedial':
+                        return $rataRata > 0 && $rataRata < 75;
+                    case 'belum':
+                        return $s->nilai->count() == 0;
+                    default:
+                        return true;
+                }
+            });
+        }
+
+        // Definisikan jenis nilai
+        $jenis = [
+            'tugas' => 'Tugas',
+        ];
+
+        return view('guru.nilai.index', compact('kelas', 'siswa', 'jenis'));
     }
 
     public function byKelas(Request $request, $kelasId)

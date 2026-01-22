@@ -43,7 +43,8 @@
     <main class="md:ml-64 min-h-screen p-4 md:p-6 transition-all duration-300">
         <!-- Back Button -->
         <div class="mb-6">
-            <a href="{{ route('guru.tugas.index') }}" class="inline-flex items-center text-blue-600 hover:text-blue-800">
+            <a href="{{ route('guru.tugas.index') }}"
+                class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg text-sm font-medium inline-flex items-center transition">
                 <i class="fas fa-arrow-left mr-2"></i> Kembali ke Daftar Tugas
             </a>
         </div>
