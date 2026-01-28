@@ -12,102 +12,151 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
 
-        .illustration {
-            animation: float 6s ease-in-out infinite;
+        .info-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        @keyframes float {
+        .scrollable-content {
+            max-height: 70vh;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
 
-            0%,
-            100% {
-                transform: translateY(0px);
-            }
+        .scrollable-content::-webkit-scrollbar {
+            width: 5px;
+        }
 
-            50% {
-                transform: translateY(-20px);
-            }
+        .scrollable-content::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
         }
     </style>
 </head>
 
 <body class="bg-gray-50 min-h-screen">
     <div class="flex min-h-screen">
-        <!-- Kolom Kiri: Ilustrasi & Welcome -->
-        <div class="hidden lg:flex flex-col justify-between login-bg w-1/2 p-12 text-white">
-            <div>
+        <!-- Kolom Kiri: Data Sekolah (DINAMIS) -->
+        <div class="hidden lg:flex flex-col justify-between login-bg w-1/2 p-8 text-white">
+            <div class="scrollable-content">
+                <!-- Logo dan Nama Sekolah -->
                 <div class="flex items-center mb-8">
-                    <i class="fas fa-graduation-cap text-3xl mr-3"></i>
-                    <h1 class="text-3xl font-bold">E-Learning STIPA</h1>
+                    @if ($dataSekolah && $dataSekolah->logo)
+                        <img src="{{ Storage::url($dataSekolah->logo) }}" alt="Logo Sekolah"
+                            class="h-14 w-14 mr-4 object-contain bg-white rounded-lg p-1">
+                    @else
+                        <div class="h-14 w-14 mr-4 flex items-center justify-center bg-white rounded-lg">
+                            <i class="fas fa-school text-2xl text-blue-600"></i>
+                        </div>
+                    @endif
+                    <div>
+                        <h1 class="text-2xl font-bold">{{ $dataSekolah->nama_sekolah ?? 'E-Learning Sekolah' }}</h1>
+                        <p class="text-sm opacity-90 mt-1">Sistem Pembelajaran Online Terintegrasi</p>
+                    </div>
                 </div>
 
-                <div class="mt-8">
-                    <h2 class="text-4xl font-bold mb-4">Selamat Datang Kembali!</h2>
-                    <p class="text-xl opacity-90 mb-8">
-                        Sistem pembelajaran online terintegrasi untuk sekolah Anda
-                    </p>
-
-                    <div class="space-y-6">
-                        <div class="flex items-center">
-                            <div class="bg-white bg-opacity-20 p-3 rounded-full mr-4">
-                                <i class="fas fa-book-open text-xl"></i>
+                <!-- Visi Sekolah -->
+                @if ($dataSekolah && $dataSekolah->visi)
+                    <div class="info-card p-5 rounded-xl mb-6">
+                        <div class="flex items-center mb-3">
+                            <div class="bg-blue-500 p-2 rounded-lg mr-3">
+                                <i class="fas fa-eye text-white text-sm"></i>
                             </div>
-                            <div>
-                                <h3 class="font-semibold text-lg">Materi Pembelajaran</h3>
-                                <p class="opacity-80">Akses materi kapan saja, di mana saja</p>
-                            </div>
+                            <h2 class="text-lg font-bold">Visi Sekolah</h2>
                         </div>
+                        <p class="leading-relaxed">{{ $dataSekolah->visi }}</p>
+                    </div>
+                @endif
 
-                        <div class="flex items-center">
-                            <div class="bg-white bg-opacity-20 p-3 rounded-full mr-4">
-                                <i class="fas fa-tasks text-xl"></i>
+                <!-- Misi Sekolah -->
+                @if ($dataSekolah && $dataSekolah->misi)
+                    <div class="info-card p-5 rounded-xl mb-6">
+                        <div class="flex items-center mb-3">
+                            <div class="bg-green-500 p-2 rounded-lg mr-3">
+                                <i class="fas fa-bullseye text-white text-sm"></i>
                             </div>
-                            <div>
-                                <h3 class="font-semibold text-lg">Tugas & Penilaian</h3>
-                                <p class="opacity-80">Kerjakan tugas dan pantau nilai secara real-time</p>
-                            </div>
+                            <h2 class="text-lg font-bold">Misi Sekolah</h2>
                         </div>
+                        <p class="leading-relaxed">{{ $dataSekolah->misi }}</p>
+                    </div>
+                @endif
 
-                        <div class="flex items-center">
-                            <div class="bg-white bg-opacity-20 p-3 rounded-full mr-4">
-                                <i class="fas fa-comments text-xl"></i>
-                            </div>
-                            <div>
-                                <h3 class="font-semibold text-lg">Diskusi Interaktif</h3>
-                                <p class="opacity-80">Berinteraksi dengan guru dan siswa lainnya</p>
-                            </div>
+                <!-- Kontak dan Alamat -->
+                <div class="info-card p-5 rounded-xl mb-6">
+                    <div class="flex items-center mb-3">
+                        <div class="bg-purple-500 p-2 rounded-lg mr-3">
+                            <i class="fas fa-address-card text-white text-sm"></i>
                         </div>
+                        <h2 class="text-lg font-bold">Kontak & Alamat</h2>
+                    </div>
+                    <div class="space-y-3">
+                        @if ($dataSekolah && $dataSekolah->alamat)
+                            <div class="flex items-start">
+                                <i class="fas fa-map-marker-alt mt-1 mr-3 w-5 text-yellow-300"></i>
+                                <span>{{ $dataSekolah->alamat }}</span>
+                            </div>
+                        @endif
+
+                        @if ($dataSekolah && $dataSekolah->telepon)
+                            <div class="flex items-center">
+                                <i class="fas fa-phone mr-3 w-5 text-green-300"></i>
+                                <span>{{ $dataSekolah->telepon }}</span>
+                            </div>
+                        @endif
+
+                        @if ($dataSekolah && $dataSekolah->email)
+                            <div class="flex items-center">
+                                <i class="fas fa-envelope mr-3 w-5 text-red-300"></i>
+                                <span>{{ $dataSekolah->email }}</span>
+                            </div>
+                        @endif
+
+                        @if ($dataSekolah && $dataSekolah->website)
+                            <div class="flex items-center">
+                                <i class="fas fa-globe mr-3 w-5 text-blue-300"></i>
+                                <a href="{{ $dataSekolah->website }}" target="_blank" class="hover:underline">
+                                    Kunjungi Website
+                                </a>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
 
-            <!-- Ilustrasi -->
-            <div class="text-center illustration">
-                <div class="inline-block p-6 bg-white bg-opacity-10 rounded-3xl">
-                    <i class="fas fa-laptop-house text-6xl"></i>
-                </div>
-                <p class="mt-4 opacity-80">Belajar lebih efektif dengan sistem digital</p>
-            </div>
-
-            <div class="text-sm opacity-75">
-                <p>© 2024 E-Learning System. All rights reserved.</p>
+            <!-- Footer -->
+            <div class="mt-6 pt-4 border-t border-white border-opacity-20">
+                <p class="text-sm opacity-80">
+                    {{ date('Y') }} - {{ $dataSekolah->nama_sekolah ?? 'Sistem E-Learning Sekolah' }}
+                </p>
             </div>
         </div>
 
-        <!-- Kolom Kanan: Form Login -->
+        <!-- Kolom Kanan: Form Login (TETAP SAMA) -->
         <div class="flex-1 flex items-center justify-center p-8">
             <div class="w-full max-w-md">
-
+                <!-- Logo Mobile -->
                 <div class="lg:hidden flex justify-center mb-8">
                     <div class="flex items-center">
-                        <i class="fas fa-graduation-cap text-blue-600 text-3xl mr-3"></i>
-                        <h1 class="text-2xl font-bold text-gray-900">E-Learning</h1>
+                        @if ($dataSekolah && $dataSekolah->logo)
+                            <img src="{{ Storage::url($dataSekolah->logo) }}" alt="Logo Sekolah"
+                                class="h-12 w-12 mr-3 object-contain bg-gray-100 rounded-lg p-1">
+                        @else
+                            <i class="fas fa-school text-blue-600 text-3xl mr-3"></i>
+                        @endif
+                        <div>
+                            <h1 class="text-2xl font-bold text-gray-900">
+                                {{ $dataSekolah->nama_sekolah ?? 'E-Learning' }}</h1>
+                            <p class="text-xs text-gray-600">Sistem Pembelajaran Online</p>
+                        </div>
                     </div>
                 </div>
 
+                <!-- Welcome Message Mobile -->
                 <div class="text-center mb-8">
-                    <h2 class="text-3xl font-bold text-gray-900">Masuk ke Akun Anda</h2>
+                    <h2 class="text-3xl font-bold text-gray-900">Masuk ke Sistem</h2>
                     <p class="text-gray-600 mt-2">
-                        Gunakan kredensial yang diberikan untuk masuk
+                        Silakan masukkan username dan password Anda
                     </p>
                 </div>
 
@@ -208,10 +257,10 @@
 
                 </div>
 
-                <!-- Footer -->
+                <!-- Footer Mobile -->
                 <div class="lg:hidden mt-8 text-center">
                     <p class="text-sm text-gray-500">
-                        © 2024 E-Learning System. All rights reserved.
+                        © {{ date('Y') }} {{ $dataSekolah->nama_sekolah ?? 'E-Learning System' }}
                     </p>
                 </div>
             </div>
@@ -227,7 +276,6 @@
 
             // Auto format for numeric inputs
             usernameInput.addEventListener('input', function(e) {
-                // Jika input adalah angka (NISN/NIK), format hanya angka
                 if (/^\d+$/.test(e.target.value)) {
                     e.target.value = e.target.value.replace(/[^0-9]/g, '');
                 }

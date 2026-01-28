@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\SiswaController;
 use App\Http\Controllers\Admin\GuruController;
 use App\Http\Controllers\Admin\KelasController;
 use App\Http\Controllers\Admin\MataPelajaranController;
+use App\Http\Controllers\Admin\DataSekolahController; // Tambahkan ini
 use App\Http\Controllers\Guru\MateriController;
 use App\Http\Controllers\Guru\TugasController as GuruTugasController;
 use App\Http\Controllers\Guru\NilaiController as GuruNilaiController;
@@ -13,7 +14,6 @@ use App\Http\Controllers\Guru\KomentarController;
 use App\Http\Controllers\Siswa\MateriSiswaController;
 use App\Http\Controllers\Siswa\TugasSiswaController;
 use App\Http\Controllers\Siswa\DashboardController as SiswaDashboardController;
-use App\Http\Controllers\Siswa\NilaiController as SiswaNilaiController; // TAMBAHKAN INI
 use App\Http\Controllers\Siswa\NilaiSiswaController;
 use Illuminate\Support\Facades\Route;
 
@@ -46,6 +46,11 @@ Route::middleware(['auth'])->group(function () {
 
     // Admin management routes - hanya bisa diakses admin
     Route::prefix('admin')->name('admin.')->middleware('role:admin')->group(function () {
+        // =============== MANAJEMEN DATA SEKOLAH ===============
+        Route::get('/data-sekolah', [DataSekolahController::class, 'index'])->name('data-sekolah.index');
+        Route::get('/data-sekolah/edit', [DataSekolahController::class, 'edit'])->name('data-sekolah.edit');
+        Route::put('/data-sekolah', [DataSekolahController::class, 'update'])->name('data-sekolah.update');
+
         // Manajemen Siswa
         Route::get('/siswa', [SiswaController::class, 'index'])->name('siswa.index');
         Route::get('/siswa/create', [SiswaController::class, 'create'])->name('siswa.create');
@@ -53,6 +58,12 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/siswa/{siswa}/edit', [SiswaController::class, 'edit'])->name('siswa.edit');
         Route::put('/siswa/{siswa}', [SiswaController::class, 'update'])->name('siswa.update');
         Route::delete('/siswa/{siswa}', [SiswaController::class, 'destroy'])->name('siswa.destroy');
+
+        // ROUTE IMPORT SISWA
+        Route::get('/siswa/template', [SiswaController::class, 'downloadTemplate'])->name('siswa.template');
+        Route::post('/siswa/import', [SiswaController::class, 'import'])->name('siswa.import');
+        Route::get('/siswa/preview-import', [SiswaController::class, 'previewImport'])->name('siswa.preview-import'); // optional
+        Route::post('/siswa/process-import', [SiswaController::class, 'processImport'])->name('siswa.process-import'); // optional
 
         // Manajemen Guru
         Route::get('/guru', [GuruController::class, 'index'])->name('guru.index');
@@ -127,18 +138,10 @@ Route::middleware(['auth'])->group(function () {
         // Download file tugas yang sudah dikumpulkan
         Route::get('/pengumpulan/{pengumpulan}/download', [TugasSiswaController::class, 'downloadTugas'])->name('tugas.download');
 
-        // NILAI untuk SISWA (ROUTE BARU)
+        // NILAI untuk SISWA
         Route::get('/nilai', [NilaiSiswaController::class, 'index'])->name('nilai.index');
         Route::get('/nilai/{id}', [NilaiSiswaController::class, 'show'])->name('nilai.show');
         Route::get('/nilai-chart', [NilaiSiswaController::class, 'chart'])->name('nilai.chart');
-    });
-
-    // Route untuk semua role (optional)
-    Route::middleware(['auth'])->group(function () {
-        // Route untuk profil user (opsional, jika ada)
-        // Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-        // Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-        // Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     });
 });
 

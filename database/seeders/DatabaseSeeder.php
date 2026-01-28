@@ -11,14 +11,31 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // Seeder untuk roles
+        // =============== SEEDER DATA SEKOLAH ===============
+        DB::table('data_sekolah')->insert([
+            'nama_sekolah' => 'Sekolah Tinggi Ilmu Pendidikan dan Bahasa Asing',
+            'logo' => null,
+            'visi' => 'Menjadi institusi pendidikan tinggi yang unggul dalam menghasilkan pendidik dan tenaga profesional di bidang bahasa asing yang berdaya saing global.',
+            'misi' => '1. Menyelenggarakan pendidikan yang berkualitas dan relevan dengan kebutuhan masyarakat.
+2. Mengembangkan penelitian yang inovatif dan bermanfaat bagi pengembangan ilmu pendidikan dan bahasa.
+3. Melaksanakan pengabdian kepada masyarakat secara berkelanjutan.
+4. Mengembangkan kerjasama dengan berbagai institusi dalam dan luar negeri.',
+            'alamat' => 'Jl. Pendidikan No. 123, Kota Pendidikan, Jawa Barat',
+            'telepon' => '(021) 1234-5678',
+            'email' => 'info@stipa.ac.id',
+            'website' => 'https://stipa.ac.id',
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
+
+        // =============== SEEDER ROLES ===============
         DB::table('roles')->insert([
             ['nama_role' => 'Administrator', 'created_at' => now(), 'updated_at' => now()],
             ['nama_role' => 'Guru', 'created_at' => now(), 'updated_at' => now()],
             ['nama_role' => 'Siswa', 'created_at' => now(), 'updated_at' => now()],
         ]);
 
-        // Seeder untuk kelas
+        // =============== SEEDER KELAS ===============
         $kelas = ['X IPA 1', 'X IPA 2', 'X IPS 1', 'XI IPA 1', 'XI IPA 2', 'XI IPS 1', 'XII IPA 1', 'XII IPA 2', 'XII IPS 1'];
         foreach ($kelas as $nama_kelas) {
             DB::table('kelas')->insert([
@@ -28,7 +45,7 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        // Seeder untuk mata pelajaran
+        // =============== SEEDER MATA PELAJARAN ===============
         $mapel = ['Matematika', 'Fisika', 'Kimia', 'Biologi', 'Bahasa Indonesia', 'Bahasa Inggris', 'Sejarah', 'Geografi', 'Ekonomi', 'Sosiologi'];
         foreach ($mapel as $nama_mapel) {
             DB::table('mata_pelajaran')->insert([
@@ -38,7 +55,7 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        // Seeder untuk admin default
+        // =============== SEEDER ADMIN DEFAULT ===============
         DB::table('admin')->insert([
             'nama' => 'Administrator',
             'email' => 'admin@elearning.com',
@@ -50,7 +67,7 @@ class DatabaseSeeder extends Seeder
             'updated_at' => now()
         ]);
 
-        // Seeder untuk guru contoh
+        // =============== SEEDER GURU CONTOH ===============
         DB::table('guru')->insert([
             [
                 'nik' => 'G001',
@@ -76,7 +93,7 @@ class DatabaseSeeder extends Seeder
             ]
         ]);
 
-        // Seeder untuk akun admin
+        // =============== SEEDER AKUN ADMIN ===============
         DB::table('akun')->insert([
             'username' => 'admin',
             'password' => Hash::make('password'),
@@ -87,7 +104,7 @@ class DatabaseSeeder extends Seeder
             'updated_at' => now()
         ]);
 
-        // Seeder untuk akun guru
+        // =============== SEEDER AKUN GURU ===============
         DB::table('akun')->insert([
             [
                 'username' => 'G001',
@@ -109,7 +126,10 @@ class DatabaseSeeder extends Seeder
             ]
         ]);
 
-        // HAPUS: Bagian data siswa dihapus karena sekarang didaftarkan oleh admin
-        // Data siswa akan ditambahkan melalui sistem oleh admin
+        $this->command->info('Semua data seeder berhasil ditambahkan!');
+        $this->command->info('Data sekolah, roles, kelas, mata pelajaran, admin, guru, dan akun telah dibuat.');
+        $this->command->info('Akun admin: username=admin, password=password');
+        $this->command->info('Akun guru: username=G001, password=G001');
+        $this->command->info('Akun guru: username=G002, password=G002');
     }
 }

@@ -119,19 +119,37 @@
         <!-- Sidebar header -->
         <div class="p-6 border-b">
             <div class="flex items-center">
-                <i class="fas fa-graduation-cap text-blue-600 text-2xl mr-3"></i>
-                <h1 class="text-2xl font-bold text-gray-900">
-                    @auth
-                        E-Learning -
-                        @if (Auth::user()->user_type === 'admin')
-                            Admin
-                        @elseif(Auth::user()->user_type === 'guru')
-                            Guru
+                @php
+                    use App\Models\DataSekolah;
+                    $sekolah = DataSekolah::first();
+                @endphp
+
+                @if ($sekolah && $sekolah->logo)
+                    <img src="{{ Storage::url($sekolah->logo) }}" alt="Logo Sekolah"
+                        class="w-8 h-8 object-contain mr-3 rounded">
+                @else
+                    <i class="fas fa-graduation-cap text-blue-600 text-2xl mr-3"></i>
+                @endif
+                <div>
+                    <h1 class="text-xl font-bold text-gray-900">
+                        @if ($sekolah)
+                            {{ Str::limit($sekolah->nama_sekolah, 20) }}
                         @else
-                            Siswa
+                            E-Learning
                         @endif
-                    @endauth
-                </h1>
+                    </h1>
+                    <p class="text-xs text-gray-500 mt-1">
+                        @auth
+                            @if (Auth::user()->user_type === 'admin')
+                                Panel Admin
+                            @elseif(Auth::user()->user_type === 'guru')
+                                Panel Guru
+                            @else
+                                Panel Siswa
+                            @endif
+                        @endauth
+                    </p>
+                </div>
             </div>
         </div>
 
@@ -141,6 +159,13 @@
                 class="flex items-center p-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg {{ request()->routeIs('admin.dashboard') ? 'active-sidebar-link' : '' }}">
                 <i class="fas fa-tachometer-alt w-6 text-center"></i>
                 <span class="ml-3 font-medium">Dashboard</span>
+            </a>
+
+            <!-- Menu Data Sekolah -->
+            <a href="{{ route('admin.data-sekolah.index') }}"
+                class="flex items-center p-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg {{ request()->routeIs('admin.data-sekolah.*') ? 'active-sidebar-link' : '' }}">
+                <i class="fas fa-school w-6 text-center"></i>
+                <span class="ml-3 font-medium">Data Sekolah</span>
             </a>
 
             <a href="{{ route('admin.siswa.index') }}"
@@ -157,7 +182,7 @@
 
             <a href="{{ route('admin.kelas.index') }}"
                 class="flex items-center p-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg {{ request()->routeIs('admin.kelas.*') ? 'active-sidebar-link' : '' }}">
-                <i class="fas fa-school w-6 text-center"></i>
+                <i class="fas fa-chalkboard w-6 text-center"></i>
                 <span class="ml-3 font-medium">Kelas</span>
             </a>
 
@@ -171,12 +196,12 @@
         <!-- User info and logout -->
         <div class="p-4 border-t">
             <div class="flex items-center mb-4">
-                <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                    <i class="fas fa-user text-blue-600"></i>
+                <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                    <i class="fas fa-user-cog text-blue-600"></i>
                 </div>
                 <div class="ml-3">
                     <p class="text-sm font-medium text-gray-700">{{ Auth::user()->username }}</p>
-                    <p class="text-xs text-gray-500">
+                    <p class="text-xs text-gray-500 capitalize">
                         @if (Auth::user()->user_type === 'admin')
                             Administrator
                         @elseif(Auth::user()->user_type === 'guru')
@@ -191,18 +216,83 @@
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
                 <button type="submit"
-                    class="flex items-center justify-center w-full p-3 text-gray-700 hover:bg-red-50 hover:text-red-600 rounded-lg">
+                    class="flex items-center justify-center w-full p-3 text-gray-700 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors">
                     <i class="fas fa-sign-out-alt w-6 text-center"></i>
                     <span class="ml-3 font-medium">Logout</span>
                 </button>
             </form>
+
+            <!-- Info Sekolah Footer -->
+            @if ($sekolah)
+                <div class="mt-4 pt-4 border-t border-gray-200">
+                    <div class="text-xs text-gray-500">
+                        <p class="font-medium mb-1">{{ Str::limit($sekolah->nama_sekolah, 30) }}</p>
+                        <p class="truncate">{{ Str::limit($sekolah->alamat, 40) }}</p>
+                        <p class="mt-1"><i class="fas fa-phone mr-1 text-xs"></i> {{ $sekolah->telepon }}</p>
+                    </div>
+                </div>
+            @endif
         </div>
     </div>
 
     <!-- Main content area -->
-   {{--  <div id="mainContent" class="transition-all">
+    {{-- <div id="mainContent" class="transition-all">
+        @yield('content')
     </div> --}}
 
+    <script>
+        // Close sidebar when clicking outside on mobile
+        document.querySelector('.overlay').addEventListener('click', function() {
+            document.getElementById('mobileToggle').checked = false;
+        });
+
+        // Close sidebar when clicking a link on mobile
+        document.querySelectorAll('.sidebar a').forEach(link => {
+            link.addEventListener('click', function() {
+                if (window.innerWidth <= 768) {
+                    document.getElementById('mobileToggle').checked = false;
+                }
+            });
+        });
+
+        // Add active class to current page
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPath = window.location.pathname;
+            document.querySelectorAll('.sidebar a').forEach(link => {
+                if (link.getAttribute('href') === currentPath) {
+                    link.classList.add('active-sidebar-link');
+                }
+            });
+        });
+
+        // Auto-close sidebar on mobile after click
+        if (window.innerWidth <= 768) {
+            document.querySelectorAll('.sidebar a').forEach(link => {
+                link.addEventListener('click', () => {
+                    document.getElementById('mobileToggle').checked = false;
+                });
+            });
+        }
+
+        // Keyboard shortcut for sidebar (Esc to close)
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && window.innerWidth <= 768) {
+                document.getElementById('mobileToggle').checked = false;
+            }
+        });
+
+        // Update sidebar based on screen size
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 768) {
+                document.getElementById('mobileToggle').checked = true;
+            }
+        });
+
+        // Initialize based on screen size
+        if (window.innerWidth > 768) {
+            document.getElementById('mobileToggle').checked = true;
+        }
+    </script>
 </body>
 
 </html>

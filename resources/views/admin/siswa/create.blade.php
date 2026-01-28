@@ -54,6 +54,81 @@
                 </a>
             </div>
 
+            <!-- Upload Section -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+                <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
+                    <div>
+                        <h2 class="text-xl font-bold text-gray-900">Import Data dari Excel</h2>
+                        <p class="text-gray-600 mt-1">Upload file Excel untuk menambahkan banyak siswa sekaligus</p>
+                    </div>
+                    <div class="flex space-x-3">
+                        <a href="{{ route('admin.siswa.template') }}"
+                            class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium inline-flex items-center transition">
+                            <i class="fas fa-download mr-2"></i>Download Template
+                        </a>
+                        <button type="button" onclick="toggleUploadForm()"
+                            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium inline-flex items-center transition">
+                            <i class="fas fa-upload mr-2"></i>Upload Excel
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Upload Form (Hidden by Default) -->
+                <div id="uploadForm" class="mt-6 hidden">
+                    <form action="{{ route('admin.siswa.import') }}" method="POST" enctype="multipart/form-data"
+                        class="border-t pt-6">
+                        @csrf
+                        <div class="mb-4">
+                            <div class="flex items-center justify-center w-full">
+                                <label for="file"
+                                    class="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
+                                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                        <i class="fas fa-file-excel text-4xl text-green-600 mb-3"></i>
+                                        <p class="mb-2 text-sm text-gray-500">
+                                            <span class="font-semibold">Klik untuk upload</span> atau drag and drop
+                                        </p>
+                                        <p class="text-xs text-gray-500">Excel (.xlsx, .xls, .csv) - Max 2MB</p>
+                                    </div>
+                                    <input id="file" name="file" type="file" class="hidden"
+                                        accept=".xlsx,.xls,.csv" />
+                                </label>
+                            </div>
+                            <div id="fileName" class="mt-2 text-sm text-gray-500"></div>
+                        </div>
+
+                        <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-4">
+                            <div class="flex">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-exclamation-triangle text-yellow-400"></i>
+                                </div>
+                                <div class="ml-3">
+                                    <h4 class="text-sm font-semibold text-yellow-800">Perhatian!</h4>
+                                    <div class="mt-2 text-sm text-yellow-700">
+                                        <ul class="list-disc list-inside space-y-1">
+                                            <li>Kolom wajib: NISN, NIS, Nama</li>
+                                            <li>NISN dan NIS harus unik</li>
+                                            <li>Username = NISN, Password = NIS</li>
+                                            <li>Format jenis kelamin: L/P atau Laki-laki/Perempuan</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-end space-x-3">
+                            <button type="button" onclick="toggleUploadForm()"
+                                class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition">
+                                Batal
+                            </button>
+                            <button type="submit"
+                                class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg text-sm font-medium inline-flex items-center transition">
+                                <i class="fas fa-upload mr-2"></i>Upload & Import
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
             @if ($errors->any())
                 <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-6">
                     <div class="flex">
@@ -217,5 +292,64 @@
         </div>
     </main>
 </body>
+
+<script>
+    function toggleUploadForm() {
+        const form = document.getElementById('uploadForm');
+        form.classList.toggle('hidden');
+    }
+
+    // File input handler
+    document.getElementById('file').addEventListener('change', function(e) {
+        const fileName = document.getElementById('fileName');
+        if (this.files.length > 0) {
+            fileName.textContent = 'File terpilih: ' + this.files[0].name;
+            fileName.classList.add('text-green-600', 'font-medium');
+        } else {
+            fileName.textContent = '';
+        }
+    });
+
+    // Drag and drop functionality
+    const dropArea = document.querySelector('label[for="file"]');
+
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, preventDefaults, false);
+    });
+
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+        dropArea.addEventListener(eventName, highlight, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, unhighlight, false);
+    });
+
+    function highlight(e) {
+        dropArea.classList.add('bg-blue-50', 'border-blue-300');
+    }
+
+    function unhighlight(e) {
+        dropArea.classList.remove('bg-blue-50', 'border-blue-300');
+    }
+
+    dropArea.addEventListener('drop', handleDrop, false);
+
+    function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        const input = document.getElementById('file');
+        input.files = files;
+
+        // Trigger change event
+        const event = new Event('change');
+        input.dispatchEvent(event);
+    }
+</script>
 
 </html>

@@ -4,9 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\Akun;
-use App\Models\Siswa;
-use App\Models\Guru;
-use App\Models\Admin;
+use App\Models\DataSekolah; // Tambahkan ini
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -22,7 +20,10 @@ class LoginController extends Controller
             return $this->redirectToDashboard();
         }
 
-        return view('auth.login');
+        // Ambil data sekolah
+        $dataSekolah = DataSekolah::first();
+
+        return view('auth.login', compact('dataSekolah')); // Kirim data sekolah ke view
     }
 
     // Process login
