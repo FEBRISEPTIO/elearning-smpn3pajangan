@@ -225,7 +225,7 @@
                                                 class="text-blue-600 hover:text-blue-900 p-2 hover:bg-blue-50 rounded">
                                                 <i class="fas fa-eye"></i>
                                             </a>
-                                            <a href="{{ route('guru.tugas.edit', $item) }}"
+                                            <a href="{{ route('guru.tugas.edit', $item->id) }}"
                                                 class="text-yellow-600 hover:text-yellow-900 p-2 hover:bg-yellow-50 rounded">
                                                 <i class="fas fa-edit"></i>
                                             </a>

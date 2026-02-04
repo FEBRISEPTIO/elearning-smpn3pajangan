@@ -10,101 +10,75 @@ class Tugas extends Model
     use HasFactory;
 
     protected $table = 'tugas';
+    protected $primaryKey = 'id';
 
+    // Sesuai dengan field di database
     protected $fillable = [
         'judul_tugas',
         'deskripsi',
-        'tugas',
+        'tugas',        // field untuk konten/instruksi tugas
         'deadline',
         'mapel_id',
         'kelas_id',
         'guru_nik'
+        // Note: field 'file' tidak ada di database Anda, jadi kita skip
     ];
 
     protected $casts = [
         'deadline' => 'datetime',
     ];
 
-    /**
-     * Relasi ke kelas
-     */
+    // Relasi ke kelas
     public function kelas()
     {
         return $this->belongsTo(Kelas::class, 'kelas_id');
     }
 
-    /**
-     * Relasi ke mata pelajaran
-     */
+    // Relasi ke mata pelajaran
     public function mataPelajaran()
     {
         return $this->belongsTo(MataPelajaran::class, 'mapel_id');
     }
 
-    /**
-     * Relasi ke guru
-     */
+    // Relasi ke guru
     public function guru()
     {
         return $this->belongsTo(Guru::class, 'guru_nik', 'nik');
     }
 
-    /**
-     * Relasi ke komentar (khusus tugas)
-     */
+    // Relasi ke komentar
     public function komentar()
     {
-        return $this->hasMany(Komentar::class, 'tugas_id')->whereNull('materi_id');
+        return $this->hasMany(Komentar::class, 'tugas_id');
     }
 
-    /**
-     * Relasi ke pengumpulan tugas
-     */
+    // Relasi ke pengumpulan
     public function pengumpulan()
     {
         return $this->hasMany(PengumpulanTugas::class, 'tugas_id');
     }
 
-    /**
-     * Accessor untuk jumlah komentar
-     */
-    public function getKomentarCountAttribute()
+    // Accessor untuk status deadline
+    public function getStatusAttribute()
     {
-        if ($this->relationLoaded('komentar')) {
-            return $this->komentar->count();
-        }
-        return $this->komentar()->count();
+        return now()->greaterThan($this->deadline) ? 'selesai' : 'aktif';
     }
 
-    /**
-     * Accessor untuk cek apakah deadline sudah lewat
-     */
-    public function getIsDeadlinePassedAttribute()
-    {
-        return now()->greaterThan($this->deadline);
-    }
-
-    /**
-     * Accessor untuk sisa waktu deadline
-     */
-    public function getTimeRemainingAttribute()
-    {
-        return now()->diff($this->deadline);
-    }
-
-    /**
-     * Scope untuk tugas aktif (belum lewat deadline)
-     */
+    // Scope untuk tugas aktif
     public function scopeAktif($query)
     {
         return $query->where('deadline', '>', now());
     }
 
-    /**
-     * Scope untuk tugas yang sudah lewat deadline
-     */
-    public function scopeLewatDeadline($query)
+    // Scope untuk tugas selesai
+    public function scopeSelesai($query)
     {
         return $query->where('deadline', '<=', now());
+    }
+
+    // Scope untuk tugas milik guru tertentu
+    public function scopeMilikGuru($query, $guruNik)
+    {
+        return $query->where('guru_nik', $guruNik);
     }
 }

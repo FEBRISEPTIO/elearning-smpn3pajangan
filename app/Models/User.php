@@ -60,4 +60,5 @@ class User extends Authenticatable
     {
         return $this->hasOne(Siswa::class, 'user_id');
     }
+    
 }

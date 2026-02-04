@@ -14,28 +14,37 @@ use Illuminate\Support\Facades\Auth;
 
 class TugasController extends Controller
 {
+    /**
+     * Menampilkan daftar tugas
+     */
     public function index(Request $request)
     {
-        $guru = Auth::user()->guru;
+        // Ambil user yang login
+        $user = Auth::user();
 
-        if (!$guru) {
-            abort(403, 'Anda tidak memiliki akses guru');
+        // Cek apakah user memiliki data guru
+        if (!$user->guru) {
+            return redirect()->route('home')
+                ->with('error', 'Data guru tidak ditemukan untuk akun Anda');
         }
 
-        $query = Tugas::where('guru_nik', $guru->nik)
+        $guruNik = $user->guru->nik;
+
+        // Mulai query
+        $query = Tugas::where('guru_nik', $guruNik)
             ->with(['kelas', 'mataPelajaran'])
             ->withCount('komentar');
 
-        // Filter
-        if ($request->has('kelas') && $request->kelas != '') {
+        // Filter berdasarkan request
+        if ($request->filled('kelas')) {
             $query->where('kelas_id', $request->kelas);
         }
 
-        if ($request->has('mapel') && $request->mapel != '') {
+        if ($request->filled('mapel')) {
             $query->where('mapel_id', $request->mapel);
         }
 
-        if ($request->has('status') && $request->status != '') {
+        if ($request->filled('status')) {
             if ($request->status == 'aktif') {
                 $query->where('deadline', '>', now());
             } elseif ($request->status == 'selesai') {
@@ -43,33 +52,51 @@ class TugasController extends Controller
             }
         }
 
-        if ($request->has('search') && $request->search != '') {
+        if ($request->filled('search')) {
             $query->where('judul_tugas', 'like', '%' . $request->search . '%');
         }
 
+        // Urutkan dan paginate
         $tugas = $query->orderBy('deadline', 'asc')->paginate(10);
-        $kelas = Kelas::orderBy('kelas', 'asc')->get();
-        $mapels = MataPelajaran::orderBy('nama_mapel', 'asc')->get();
+
+        // Data untuk filter dropdown
+        $kelas = Kelas::orderBy('kelas')->get();
+        $mapels = MataPelajaran::orderBy('nama_mapel')->get();
 
         return view('guru.tugas.index', compact('tugas', 'kelas', 'mapels'));
     }
 
+    /**
+     * Menampilkan form create
+     */
     public function create()
     {
-        $guru = Auth::user()->guru;
+        $user = Auth::user();
 
-        if (!$guru) {
-            abort(403, 'Anda tidak memiliki akses guru');
+        // Cek akses guru
+        if (!$user->guru) {
+            return back()->with('error', 'Data guru tidak ditemukan');
         }
 
-        $kelas = Kelas::orderBy('kelas', 'asc')->get();
-        $mapels = MataPelajaran::orderBy('nama_mapel', 'asc')->get();
+        $kelas = Kelas::orderBy('kelas')->get();
+        $mapels = MataPelajaran::orderBy('nama_mapel')->get();
 
         return view('guru.tugas.create', compact('kelas', 'mapels'));
     }
 
+    /**
+     * Menyimpan tugas baru
+     */
     public function store(Request $request)
     {
+        $user = Auth::user();
+
+        // Cek akses guru
+        if (!$user->guru) {
+            return back()->with('error', 'Data guru tidak ditemukan');
+        }
+
+        // Validasi input
         $request->validate([
             'judul' => 'required|string|max:255',
             'deskripsi' => 'nullable|string',
@@ -79,82 +106,97 @@ class TugasController extends Controller
             'konten_tugas' => 'nullable|string',
         ]);
 
-        $guru = Auth::user()->guru;
-
-        if (!$guru) {
-            abort(403, 'Anda tidak memiliki akses guru');
-        }
-
-        $data = [
+        // Simpan ke database
+        Tugas::create([
             'judul_tugas' => $request->judul,
             'deskripsi' => $request->deskripsi,
+            'tugas' => $request->konten_tugas ?? 'Tidak ada konten tambahan',
+            'deadline' => $request->deadline,
             'mapel_id' => $request->mata_pelajaran_id,
             'kelas_id' => $request->kelas_id,
-            'guru_nik' => $guru->nik,
-            'tugas' => $request->konten_tugas,
-            'deadline' => $request->deadline,
-        ];
-
-        if (empty($data['tugas'])) {
-            $data['tugas'] = 'Tidak ada konten tambahan';
-        }
-
-        $tugas = Tugas::create($data);
+            'guru_nik' => $user->guru->nik,
+        ]);
 
         return redirect()->route('guru.tugas.index')
-            ->with('success', 'Tugas berhasil ditambahkan.');
+            ->with('success', 'Tugas berhasil dibuat');
     }
 
+    /**
+     * Menampilkan detail tugas
+     */
     public function show($id)
-{
-
-
-    // Cari tugas dengan relasi
-    $tugas = Tugas::with(['kelas', 'mataPelajaran'])
-        ->withCount('komentar')
-        ->find($id);
-
-    if (!$tugas) {
-        abort(404, 'Tugas tidak ditemukan');
-    }
-
-    // Authorization check - INI YANG TIDAK ADA SEBELUMNYA
-    $guru = Auth::user()->guru;
-    
-    if (!$guru) {
-        abort(403, 'Data guru tidak ditemukan');
-    }
-
-    if ($guru->nik != $tugas->guru_nik) {
-        abort(403, 'ANDA TIDAK MEMILIKI AKSES KE TUGAS INI');
-    }
-
-    // Query komentar
-    $komentars = Komentar::where('tugas_id', $tugas->id)
-        ->orderBy('created_at', 'desc')
-        ->paginate(10);
-
-    return view('guru.tugas.show', compact('tugas', 'komentars'));
-}
-
-    public function edit(Tugas $tugas)
     {
-        if (Auth::user()->guru->nik != $tugas->guru_nik) {
-            abort(403, 'Anda tidak memiliki akses ke tugas ini');
+        $user = Auth::user();
+
+        // Cek akses guru
+        if (!$user->guru) {
+            abort(403, 'Data guru tidak ditemukan untuk akun Anda');
         }
 
-        $kelas = Kelas::orderBy('kelas', 'asc')->get();
-        $mapels = MataPelajaran::orderBy('nama_mapel', 'asc')->get();
+        // Cari tugas
+        $tugas = Tugas::with(['kelas', 'mataPelajaran'])
+            ->findOrFail($id);
+
+        // Authorization: cek apakah tugas milik guru ini
+        if ($tugas->guru_nik != $user->guru->nik) {
+            abort(403, 'ANDA TIDAK MEMILIKI AKSES KE TUGAS INI');
+        }
+
+        // Ambil komentar
+        $komentars = Komentar::where('tugas_id', $id)
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+
+        return view('guru.tugas.show', compact('tugas', 'komentars'));
+    }
+
+    /**
+     * Menampilkan form edit
+     */
+    public function edit($id)
+    {
+        $user = Auth::user();
+
+        // Cek akses guru
+        if (!$user->guru) {
+            abort(403, 'Data guru tidak ditemukan');
+        }
+
+        // Cari tugas
+        $tugas = Tugas::findOrFail($id);
+
+        // Authorization
+        if ($tugas->guru_nik != $user->guru->nik) {
+            abort(403, 'ANDA TIDAK MEMILIKI AKSES KE TUGAS INI');
+        }
+
+        $kelas = Kelas::orderBy('kelas')->get();
+        $mapels = MataPelajaran::orderBy('nama_mapel')->get();
 
         return view('guru.tugas.edit', compact('tugas', 'kelas', 'mapels'));
     }
 
-    public function update(Request $request, Tugas $tugas)
+    /**
+     * Update tugas
+     */
+    public function update(Request $request, $id)
     {
-        if (Auth::user()->guru->nik != $tugas->guru_nik) {
-            abort(403, 'Anda tidak memiliki akses ke tugas ini');
+        $user = Auth::user();
+
+        // Cek akses guru
+        if (!$user->guru) {
+            abort(403, 'Data guru tidak ditemukan');
         }
 
+        // Cari tugas
+        $tugas = Tugas::findOrFail($id);
+
+        // Authorization
+        if ($tugas->guru_nik != $user->guru->nik) {
+            abort(403, 'ANDA TIDAK MEMILIKI AKSES KE TUGAS INI');
+        }
+
+        // Validasi
         $request->validate([
             'judul' => 'required|string|max:255',
             'deskripsi' => 'nullable|string',
@@ -164,106 +206,88 @@ class TugasController extends Controller
             'konten_tugas' => 'nullable|string',
         ]);
 
-        $data = [
+        // Update tugas
+        $tugas->update([
             'judul_tugas' => $request->judul,
             'deskripsi' => $request->deskripsi,
+            'tugas' => $request->konten_tugas ?? 'Tidak ada konten tambahan',
+            'deadline' => $request->deadline,
             'mapel_id' => $request->mata_pelajaran_id,
             'kelas_id' => $request->kelas_id,
-            'tugas' => $request->konten_tugas,
-            'deadline' => $request->deadline,
-        ];
+        ]);
 
-        $tugas->update($data);
-
-        return redirect()->route('guru.tugas.show', $tugas)
-            ->with('success', 'Tugas berhasil diperbarui.');
+        return redirect()->route('guru.tugas.show', $tugas->id)
+            ->with('success', 'Tugas berhasil diperbarui');
     }
 
-    public function destroy(Tugas $tugas)
+    /**
+     * Hapus tugas
+     */
+    public function destroy($id)
     {
-        if (Auth::user()->guru->nik != $tugas->guru_nik) {
-            abort(403, 'Anda tidak memiliki akses ke tugas ini');
+        $user = Auth::user();
+
+        // Cek akses guru
+        if (!$user->guru) {
+            abort(403, 'Data guru tidak ditemukan');
         }
 
+        // Cari tugas
+        $tugas = Tugas::findOrFail($id);
+
+        // Authorization
+        if ($tugas->guru_nik != $user->guru->nik) {
+            abort(403, 'ANDA TIDAK MEMILIKI AKSES KE TUGAS INI');
+        }
+
+        // Hapus tugas
         $tugas->delete();
 
         return redirect()->route('guru.tugas.index')
-            ->with('success', 'Tugas berhasil dihapus.');
+            ->with('success', 'Tugas berhasil dihapus');
     }
 
     /**
-     * Menambahkan komentar sebagai guru
+     * Halaman pengumpulan tugas
      */
-    public function storeKomentar(Request $request, Tugas $tugas)
+    public function pengumpulan($id)
     {
-        if (Auth::user()->guru->nik != $tugas->guru_nik) {
-            abort(403, 'Anda tidak memiliki akses ke tugas ini');
+        $user = Auth::user();
+
+        if (!$user->guru) {
+            abort(403, 'Data guru tidak ditemukan');
         }
 
-        $request->validate([
-            'isi_komentar' => 'required|string|max:1000',
-        ]);
+        // Cari tugas
+        $tugas = Tugas::with('kelas')->findOrFail($id);
 
-        Komentar::create([
-            'tugas_id' => $tugas->id,
-            'user_id' => Auth::id(),
-            'user_type' => 'guru',
-            'isi_komentar' => $request->isi_komentar,
-        ]);
-
-        return redirect()->back()
-            ->with('success', 'Komentar berhasil ditambahkan');
-    }
-
-    /**
-     * Menghapus komentar
-     */
-    public function destroyKomentar(Komentar $komentar)
-    {
-        $tugas = Tugas::find($komentar->tugas_id);
-
-        if (!$tugas || Auth::user()->guru->nik != $tugas->guru_nik) {
-            abort(403, 'Anda tidak memiliki akses ke komentar ini');
+        // Authorization
+        if ($tugas->guru_nik != $user->guru->nik) {
+            abort(403, 'ANDA TIDAK MEMILIKI AKSES KE TUGAS INI');
         }
 
-        if ($tugas->guru_nik == Auth::user()->guru->nik) {
-            $komentar->delete();
-        } elseif ($komentar->user_type === 'guru' && $komentar->user_id == Auth::id()) {
-            $komentar->delete();
-        } else {
-            abort(403, 'Anda tidak memiliki izin untuk menghapus komentar ini.');
-        }
-
-        return redirect()->back()
-            ->with('success', 'Komentar berhasil dihapus');
-    }
-
-    public function pengumpulan(Tugas $tugas)
-    {
-        $guru = Auth::user()->guru;
-
-        if (!$guru) {
-            abort(403, 'Anda tidak memiliki akses guru');
-        }
-
-        // Pastikan tugas milik guru ini
-        if ($tugas->guru_nik != $guru->nik) {
-            abort(403, 'Anda tidak memiliki akses ke tugas ini');
-        }
-
-        // Ambil semua pengumpulan tugas untuk tugas ini
+        // Ambil pengumpulan
         $pengumpulan = PengumpulanTugas::with(['siswa'])
-            ->where('tugas_id', $tugas->id)
+            ->where('tugas_id', $id)
             ->orderBy('submitted_at', 'desc')
             ->paginate(20);
 
-        // Hitung statistik
+        // Hitung statistik - SESUAIKAN DENGAN ENUM
         $totalSiswa = Siswa::where('kelas_id', $tugas->kelas_id)->count();
-        $sudahKumpul = PengumpulanTugas::where('tugas_id', $tugas->id)->count();
+        $sudahKumpul = PengumpulanTugas::where('tugas_id', $id)->count();
         $belumKumpul = $totalSiswa - $sudahKumpul;
-        $terlambat = PengumpulanTugas::where('tugas_id', $tugas->id)
-            ->where('status', 'late')
+        $terlambat = PengumpulanTugas::where('tugas_id', $id)
+            ->where('status', 'late') // Sesuai ENUM
             ->count();
+
+        // Ambil siswa yang belum mengumpulkan
+        $siswaBelumKumpul = Siswa::where('kelas_id', $tugas->kelas_id)
+            ->whereNotIn('nisn', function ($query) use ($id) {
+                $query->select('nisn')
+                    ->from('pengumpulan_tugas')
+                    ->where('tugas_id', $id);
+            })
+            ->get();
 
         return view('guru.tugas.pengumpulan', compact(
             'tugas',
@@ -271,19 +295,27 @@ class TugasController extends Controller
             'totalSiswa',
             'sudahKumpul',
             'belumKumpul',
-            'terlambat'
+            'terlambat',
+            'siswaBelumKumpul'
         ));
     }
 
-    public function beriNilai(Request $request, Tugas $tugas)
+    /**
+     * Beri nilai tugas
+     */
+    public function beriNilai(Request $request, $id)
     {
-        $guru = Auth::user()->guru;
+        $user = Auth::user();
 
-        if (!$guru) {
-            abort(403, 'Anda tidak memiliki akses guru');
+        if (!$user->guru) {
+            abort(403, 'Data guru tidak ditemukan');
         }
 
-        if ($tugas->guru_nik != $guru->nik) {
+        // Cari tugas
+        $tugas = Tugas::findOrFail($id);
+
+        // Authorization
+        if ($tugas->guru_nik != $user->guru->nik) {
             abort(403, 'Anda tidak memiliki akses ke tugas ini');
         }
 
@@ -293,34 +325,108 @@ class TugasController extends Controller
             'feedback' => 'nullable|string|max:1000',
         ]);
 
-        $pengumpulan = PengumpulanTugas::find($request->pengumpulan_id);
+        $pengumpulan = PengumpulanTugas::findOrFail($request->pengumpulan_id);
 
-        // Pastikan pengumpulan ini untuk tugas yang benar
-        if ($pengumpulan->tugas_id != $tugas->id) {
+        // Pastikan pengumpulan untuk tugas yang benar
+        if ($pengumpulan->tugas_id != $id) {
             abort(403, 'Pengumpulan tidak sesuai');
         }
 
+        // Gunakan 'graded' sesuai ENUM database
         $pengumpulan->update([
             'nilai' => $request->nilai,
             'feedback' => $request->feedback,
-            'status' => 'graded',
+            'status' => 'graded', // Sesuai ENUM('submitted', 'late', 'graded')
         ]);
 
-        return redirect()->route('guru.tugas.pengumpulan', $tugas)
+        return redirect()->route('guru.tugas.pengumpulan', $id)
             ->with('success', 'Nilai berhasil diberikan.');
     }
 
-    public function hapusPengumpulan(PengumpulanTugas $pengumpulan)
+    /**
+     * Tambah komentar
+     */
+    public function storeKomentar(Request $request, $id)
     {
-        $guru = Auth::user()->guru;
+        $user = Auth::user();
 
-        if (!$guru) {
-            abort(403, 'Anda tidak memiliki akses guru');
+        if (!$user->guru) {
+            abort(403, 'Data guru tidak ditemukan');
         }
 
-        // Pastikan pengumpulan untuk tugas milik guru ini
+        // Cari tugas
+        $tugas = Tugas::findOrFail($id);
+
+        // Authorization
+        if ($tugas->guru_nik != $user->guru->nik) {
+            abort(403, 'ANDA TIDAK MEMILIKI AKSES KE TUGAS INI');
+        }
+
+        // Validasi
+        $request->validate([
+            'isi_komentar' => 'required|string|max:1000',
+        ]);
+
+        // Buat komentar
+        Komentar::create([
+            'tugas_id' => $id,
+            'user_id' => $user->id,
+            'user_type' => 'guru',
+            'isi_komentar' => $request->isi_komentar,
+        ]);
+
+        return redirect()->back()
+            ->with('success', 'Komentar berhasil ditambahkan');
+    }
+
+    /**
+     * Hapus komentar
+     */
+    public function destroyKomentar($komentarId)
+    {
+        $user = Auth::user();
+
+        if (!$user->guru) {
+            abort(403, 'Data guru tidak ditemukan');
+        }
+
+        // Cari komentar
+        $komentar = Komentar::findOrFail($komentarId);
+
+        // Cari tugas terkait
+        $tugas = Tugas::find($komentar->tugas_id);
+
+        // Authorization: hanya guru pemilik tugas yang bisa hapus
+        if (!$tugas || $tugas->guru_nik != $user->guru->nik) {
+            abort(403, 'Anda tidak memiliki akses ke komentar ini');
+        }
+
+        // Hapus komentar
+        $komentar->delete();
+
+        return redirect()->back()
+            ->with('success', 'Komentar berhasil dihapus');
+    }
+
+    /**
+     * Hapus pengumpulan tugas
+     */
+    public function hapusPengumpulan($pengumpulanId)
+    {
+        $user = Auth::user();
+
+        if (!$user->guru) {
+            abort(403, 'Data guru tidak ditemukan');
+        }
+
+        // Cari pengumpulan
+        $pengumpulan = PengumpulanTugas::findOrFail($pengumpulanId);
+
+        // Cari tugas terkait
         $tugas = $pengumpulan->tugas;
-        if ($tugas->guru_nik != $guru->nik) {
+
+        // Authorization: hanya guru pemilik tugas
+        if ($tugas->guru_nik != $user->guru->nik) {
             abort(403, 'Anda tidak memiliki akses');
         }
 
@@ -329,4 +435,6 @@ class TugasController extends Controller
         return redirect()->back()
             ->with('success', 'Pengumpulan berhasil dihapus.');
     }
+
+
 }

@@ -24,7 +24,7 @@ class PengumpulanTugas extends Model
 
     protected $casts = [
         'submitted_at' => 'datetime',
-        'nilai' => 'decimal:2',
+        'nilai' => 'float',
     ];
 
     /**

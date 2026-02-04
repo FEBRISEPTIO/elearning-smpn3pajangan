@@ -55,15 +55,19 @@ class PengumpulanTugasController extends Controller
     /**
      * Memberi nilai pada pengumpulan tugas
      */
-    public function beriNilai(Request $request, Tugas $tugas)
+    public function beriNilai(Request $request, $id)
     {
-        $guru = Auth::user()->guru;
+        $user = Auth::user();
 
-        if (!$guru) {
-            abort(403, 'Anda tidak memiliki akses guru');
+        if (!$user->guru) {
+            abort(403, 'Data guru tidak ditemukan');
         }
 
-        if ($tugas->guru_nik != $guru->nik) {
+        // Cari tugas
+        $tugas = Tugas::findOrFail($id);
+
+        // Authorization
+        if ($tugas->guru_nik != $user->guru->nik) {
             abort(403, 'Anda tidak memiliki akses ke tugas ini');
         }
 
@@ -73,43 +77,44 @@ class PengumpulanTugasController extends Controller
             'feedback' => 'nullable|string|max:1000',
         ]);
 
-        $pengumpulan = PengumpulanTugas::find($request->pengumpulan_id);
+        $pengumpulan = PengumpulanTugas::findOrFail($request->pengumpulan_id);
 
-        // Pastikan pengumpulan ini untuk tugas yang benar
-        if ($pengumpulan->tugas_id != $tugas->id) {
+        // Pastikan pengumpulan untuk tugas yang benar
+        if ($pengumpulan->tugas_id != $id) {
             abort(403, 'Pengumpulan tidak sesuai');
         }
 
+        // Gunakan 'graded' sesuai ENUM database
         $pengumpulan->update([
             'nilai' => $request->nilai,
             'feedback' => $request->feedback,
-            'status' => 'graded',
+            'status' => 'graded', // Sesuai ENUM('submitted', 'late', 'graded')
         ]);
 
-        return redirect()->route('guru.pengumpulan-tugas.index', $tugas)
+        return redirect()->route('guru.tugas.pengumpulan', $id)
             ->with('success', 'Nilai berhasil diberikan.');
     }
 
     /**
      * Menghapus pengumpulan tugas
      */
-    public function destroy(PengumpulanTugas $pengumpulan)
+    public function hapusPengumpulan($pengumpulanId)
     {
-        $guru = Auth::user()->guru;
+        $user = Auth::user();
 
-        if (!$guru) {
-            abort(403, 'Anda tidak memiliki akses guru');
+        if (!$user->guru) {
+            abort(403, 'Data guru tidak ditemukan');
         }
 
-        // Pastikan pengumpulan untuk tugas milik guru ini
+        // Cari pengumpulan
+        $pengumpulan = PengumpulanTugas::findOrFail($pengumpulanId);
+
+        // Cari tugas terkait
         $tugas = $pengumpulan->tugas;
-        if ($tugas->guru_nik != $guru->nik) {
-            abort(403, 'Anda tidak memiliki akses');
-        }
 
-        // Hapus file jika ada
-        if ($pengumpulan->file && Storage::exists('public/' . $pengumpulan->file)) {
-            Storage::delete('public/' . $pengumpulan->file);
+        // Authorization: hanya guru pemilik tugas
+        if ($tugas->guru_nik != $user->guru->nik) {
+            abort(403, 'Anda tidak memiliki akses');
         }
 
         $pengumpulan->delete();
