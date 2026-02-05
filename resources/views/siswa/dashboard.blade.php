@@ -282,7 +282,7 @@
                                 <i class="fas fa-chart-bar text-white text-xl"></i>
                             </div>
                             <div class="ml-4">
-                                <h3 class="text-lg font-semibold text-gray-900">Nilai & Rapor</h3>
+                                <h3 class="text-lg font-semibold text-gray-900">Nilai</h3>
                                 <p class="text-sm text-gray-500">Lihat nilai dan perkembangan</p>
                             </div>
                         </div>

@@ -188,10 +188,10 @@
                             <!-- Stats -->
                             <div class="flex items-center justify-between text-sm text-gray-500 pt-3 border-t">
                                 <div class="flex items-center space-x-4">
-                                    <span class="flex items-center">
+                                    {{-- <span class="flex items-center">
                                         <i class="fas fa-eye mr-1"></i>
                                         {{ $item->views }}
-                                    </span>
+                                    </span> --}}
                                     <span class="flex items-center">
                                         <i class="fas fa-comment mr-1"></i>
                                         {{ $item->komentar_count }}

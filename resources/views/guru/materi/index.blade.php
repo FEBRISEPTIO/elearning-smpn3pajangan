@@ -107,17 +107,17 @@
                     </div>
                 </div>
 
-                <div class="bg-gradient-to-br from-green-500 to-green-600 text-white rounded-xl p-5 shadow-lg">
+                {{-- <div class="bg-gradient-to-br from-green-500 to-green-600 text-white rounded-xl p-5 shadow-lg">
                     <div class="flex items-center">
                         <div class="bg-white/20 p-3 rounded-full mr-4">
                             <i class="fas fa-eye text-xl"></i>
                         </div>
-                        <div>
+                        {{-- <div>
                             <p class="text-sm opacity-90">Total Dilihat</p>
                             <p class="text-2xl font-bold">{{ $materi->sum('views') ?? 0 }}</p>
-                        </div>
-                    </div>
-                </div>
+                        </div> --}}
+                    {{-- </div>
+                </div> --}}
 
                 <div class="bg-gradient-to-br from-purple-500 to-purple-600 text-white rounded-xl p-5 shadow-lg">
                     <div class="flex items-center">
@@ -283,11 +283,11 @@
                                                             <i class="fas fa-book mr-1"></i>
                                                             {{ $item->mataPelajaran->nama_mapel ?? '-' }}
                                                         </span>
-                                                        <span
+                                                        {{-- <span
                                                             class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
                                                             <i class="fas fa-eye mr-1"></i> {{ $item->views ?? 0 }}
                                                             dilihat
-                                                        </span>
+                                                        </span> --}}
                                                         @if ($item->file)
                                                             <span
                                                                 class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
@@ -309,10 +309,10 @@
                                                             <i class="far fa-calendar-alt mr-1"></i>
                                                             {{ $item->created_at->format('d M Y') }}
                                                         </span>
-                                                        <span>
+                                                        {{-- <span>
                                                             <i class="far fa-clock mr-1"></i>
                                                             {{ $item->created_at->format('H:i') }}
-                                                        </span>
+                                                        </span> --}}
                                                         @if ($item->file && Storage::disk('public')->exists($item->file))
                                                             <span>
                                                                 <i class="fas fa-file mr-1"></i>

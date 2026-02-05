@@ -222,10 +222,10 @@
                                         <i class="fas fa-comment mr-1"></i>
                                         {{ $item->komentar_count }}
                                     </span>
-                                    <span class="flex items-center">
+                                    {{-- <span class="flex items-center">
                                         <i class="fas fa-users mr-1"></i>
                                         {{ $item->pengumpulan_count ?? 0 }}
-                                    </span>
+                                    </span> --}}
                                 </div>
                                 <a href="{{ route('siswa.tugas.show', $item) }}"
                                     class="text-blue-600 hover:text-blue-800 font-medium">

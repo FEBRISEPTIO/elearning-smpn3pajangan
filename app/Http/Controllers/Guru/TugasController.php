@@ -173,7 +173,7 @@ class TugasController extends Controller
         $kelas = Kelas::orderBy('kelas')->get();
         $mapels = MataPelajaran::orderBy('nama_mapel')->get();
 
-        return view('guru.tugas.edit', compact('tugas', 'kelas', 'mapels'));
+        return view('guru.tugas.create', compact('tugas', 'kelas', 'mapels'));
     }
 
     /**

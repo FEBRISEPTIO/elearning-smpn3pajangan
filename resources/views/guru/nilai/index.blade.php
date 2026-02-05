@@ -358,55 +358,6 @@
                 @endif
             </div>
 
-            <!-- Kelas yang Diajar -->
-            <div class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden mb-8">
-                <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
-                    <h3 class="text-lg font-semibold text-gray-900">
-                        <i class="fas fa-school mr-2"></i>Kelas yang Diajar
-                    </h3>
-                </div>
-                <div class="p-6">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        @foreach ($kelas as $kelasItem)
-                            @php
-                                $siswaKelas = $siswa->where('kelas_id', $kelasItem->id);
-                                $rataKelas = $siswaKelas->flatMap->nilai->avg('nilai') ?? 0;
-                                $tuntasKelas = $siswaKelas
-                                    ->filter(function ($s) {
-                                        return $s->nilai->avg('nilai') >= 75;
-                                    })
-                                    ->count();
-                            @endphp
-                            <a href="{{ route('guru.nilai.byKelas', $kelasItem->id) }}"
-                                class="block p-6 border border-gray-200 rounded-xl hover:border-blue-300 hover:shadow-md transition">
-                                <div class="flex items-center justify-between mb-4">
-                                    <div>
-                                        <h4 class="font-semibold text-gray-900">
-                                            {{ $kelasItem->kelas ?? $kelasItem->nama_kelas }}</h4>
-                                        <p class="text-sm text-gray-600">{{ $siswaKelas->count() }} siswa</p>
-                                    </div>
-                                    <div class="text-right">
-                                        <span
-                                            class="text-2xl font-bold {{ $rataKelas >= 75 ? 'text-green-600' : 'text-red-600' }}">
-                                            {{ round($rataKelas, 2) }}
-                                        </span>
-                                        <p class="text-xs text-gray-500">Rata-rata</p>
-                                    </div>
-                                </div>
-                                <div class="flex items-center justify-between text-sm">
-                                    <span class="text-green-600">
-                                        <i class="fas fa-check-circle mr-1"></i> {{ $tuntasKelas }} tuntas
-                                    </span>
-                                    <span class="text-amber-600">
-                                        <i class="fas fa-user-graduate mr-1"></i>
-                                        {{ $siswaKelas->count() - $tuntasKelas }} remedial
-                                    </span>
-                                </div>
-                            </a>
-                        @endforeach
-                    </div>
-                </div>
-            </div>
 
             <!-- Tips Section -->
             <div class="mt-6 bg-blue-50 border border-blue-200 rounded-xl p-6">

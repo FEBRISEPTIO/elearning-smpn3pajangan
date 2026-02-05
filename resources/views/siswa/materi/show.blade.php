@@ -131,10 +131,10 @@
                         <i class="fas fa-book mr-1"></i>
                         {{ $materi->mataPelajaran->nama_mapel ?? '-' }}
                     </span>
-                    <span
+                    {{-- <span
                         class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800">
                         <i class="fas fa-eye mr-1"></i> {{ $materi->views }} dilihat
-                    </span>
+                    </span> --}}
                     @if ($materi->downloads > 0)
                         <span
                             class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">
@@ -359,9 +359,9 @@
             <div class="bg-gray-50 px-6 py-4 border-t">
                 <div class="flex flex-col md:flex-row md:items-center md:justify-between text-sm text-gray-500">
                     <div class="flex flex-wrap items-center gap-6 mb-2 md:mb-0">
-                        <span>
+                        {{-- <span>
                             <i class="far fa-eye mr-1"></i> {{ $materi->views }} dilihat
-                        </span>
+                        </span> --}}
                         <span>
                             <i class="far fa-comment mr-1"></i> {{ $materi->komentar_count }} komentar
                         </span>
