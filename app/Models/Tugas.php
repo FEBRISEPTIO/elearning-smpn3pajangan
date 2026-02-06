@@ -20,7 +20,7 @@ class Tugas extends Model
         'deadline',
         'mapel_id',
         'kelas_id',
-        'guru_nik'
+        'guru_nip'
         // Note: field 'file' tidak ada di database Anda, jadi kita skip
     ];
 
@@ -43,7 +43,7 @@ class Tugas extends Model
     // Relasi ke guru
     public function guru()
     {
-        return $this->belongsTo(Guru::class, 'guru_nik', 'nik');
+        return $this->belongsTo(Guru::class, 'guru_nip', 'nip');
     }
 
     // Relasi ke komentar
@@ -77,8 +77,8 @@ class Tugas extends Model
     }
 
     // Scope untuk tugas milik guru tertentu
-    public function scopeMilikGuru($query, $guruNik)
+    public function scopeMilikGuru($query, $guruNip)
     {
-        return $query->where('guru_nik', $guruNik);
+        return $query->where('guru_nip', $guruNip);
     }
 }

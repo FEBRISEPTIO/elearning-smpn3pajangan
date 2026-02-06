@@ -28,10 +28,10 @@ class TugasController extends Controller
                 ->with('error', 'Data guru tidak ditemukan untuk akun Anda');
         }
 
-        $guruNik = $user->guru->nik;
+        $guruNik = $user->guru->nip;
 
         // Mulai query
-        $query = Tugas::where('guru_nik', $guruNik)
+        $query = Tugas::where('guru_nip', $guruNik)
             ->with(['kelas', 'mataPelajaran'])
             ->withCount('komentar');
 
@@ -114,7 +114,7 @@ class TugasController extends Controller
             'deadline' => $request->deadline,
             'mapel_id' => $request->mata_pelajaran_id,
             'kelas_id' => $request->kelas_id,
-            'guru_nik' => $user->guru->nik,
+            'guru_nip' => $user->guru->nip,
         ]);
 
         return redirect()->route('guru.tugas.index')
@@ -138,7 +138,7 @@ class TugasController extends Controller
             ->findOrFail($id);
 
         // Authorization: cek apakah tugas milik guru ini
-        if ($tugas->guru_nik != $user->guru->nik) {
+        if ($tugas->guru_nip != $user->guru->nip) {
             abort(403, 'ANDA TIDAK MEMILIKI AKSES KE TUGAS INI');
         }
 
@@ -166,7 +166,7 @@ class TugasController extends Controller
         $tugas = Tugas::findOrFail($id);
 
         // Authorization
-        if ($tugas->guru_nik != $user->guru->nik) {
+        if ($tugas->guru_nip != $user->guru->nip) {
             abort(403, 'ANDA TIDAK MEMILIKI AKSES KE TUGAS INI');
         }
 
@@ -192,7 +192,7 @@ class TugasController extends Controller
         $tugas = Tugas::findOrFail($id);
 
         // Authorization
-        if ($tugas->guru_nik != $user->guru->nik) {
+        if ($tugas->guru_nip != $user->guru->nip) {
             abort(403, 'ANDA TIDAK MEMILIKI AKSES KE TUGAS INI');
         }
 
@@ -236,7 +236,7 @@ class TugasController extends Controller
         $tugas = Tugas::findOrFail($id);
 
         // Authorization
-        if ($tugas->guru_nik != $user->guru->nik) {
+        if ($tugas->guru_nip != $user->guru->nip) {
             abort(403, 'ANDA TIDAK MEMILIKI AKSES KE TUGAS INI');
         }
 
@@ -262,7 +262,7 @@ class TugasController extends Controller
         $tugas = Tugas::with('kelas')->findOrFail($id);
 
         // Authorization
-        if ($tugas->guru_nik != $user->guru->nik) {
+        if ($tugas->guru_nip != $user->guru->nip) {
             abort(403, 'ANDA TIDAK MEMILIKI AKSES KE TUGAS INI');
         }
 
@@ -315,7 +315,7 @@ class TugasController extends Controller
         $tugas = Tugas::findOrFail($id);
 
         // Authorization
-        if ($tugas->guru_nik != $user->guru->nik) {
+        if ($tugas->guru_nip != $user->guru->nip) {
             abort(403, 'Anda tidak memiliki akses ke tugas ini');
         }
 
@@ -358,7 +358,7 @@ class TugasController extends Controller
         $tugas = Tugas::findOrFail($id);
 
         // Authorization
-        if ($tugas->guru_nik != $user->guru->nik) {
+        if ($tugas->guru_nip != $user->guru->nip) {
             abort(403, 'ANDA TIDAK MEMILIKI AKSES KE TUGAS INI');
         }
 
@@ -397,7 +397,7 @@ class TugasController extends Controller
         $tugas = Tugas::find($komentar->tugas_id);
 
         // Authorization: hanya guru pemilik tugas yang bisa hapus
-        if (!$tugas || $tugas->guru_nik != $user->guru->nik) {
+        if (!$tugas || $tugas->guru_nip != $user->guru->nip) {
             abort(403, 'Anda tidak memiliki akses ke komentar ini');
         }
 
@@ -426,7 +426,7 @@ class TugasController extends Controller
         $tugas = $pengumpulan->tugas;
 
         // Authorization: hanya guru pemilik tugas
-        if ($tugas->guru_nik != $user->guru->nik) {
+        if ($tugas->guru_nip != $user->guru->nip) {
             abort(403, 'Anda tidak memiliki akses');
         }
 
@@ -437,4 +437,23 @@ class TugasController extends Controller
     }
 
 
+
+    // Download file pengumpulan
+    public function downloadPengumpulan($id)
+    {
+        $pengumpulan = PengumpulanTugas::findOrFail($id);
+
+        // Verifikasi apakah tugas ini milik guru yang sedang login (optional, tapi disarankan)
+        $tugas = $pengumpulan->tugas;
+        if ($tugas->guru_id != Auth::id()) {
+            // Jika ingin strict, uncomment baris bawah
+            // abort(403, 'Unauthorized access');
+        }
+
+        if (!$pengumpulan->file || !Storage::disk('public')->exists($pengumpulan->file)) {
+            return redirect()->back()->with('error', 'File tidak ditemukan.');
+        }
+
+        return Storage::disk('public')->download($pengumpulan->file);
+    }
 }

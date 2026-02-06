@@ -46,7 +46,7 @@ class Akun extends Authenticatable
     // Relasi ke guru
     public function guru()
     {
-        return $this->belongsTo(Guru::class, 'user_id', 'nik');
+        return $this->belongsTo(Guru::class, 'user_id', 'nip');
     }
 
     // Relasi ke admin

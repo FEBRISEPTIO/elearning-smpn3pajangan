@@ -24,7 +24,7 @@ class PengumpulanTugasController extends Controller
         }
 
         // Pastikan tugas milik guru ini
-        if ($tugas->guru_nik != $guru->nik) {
+        if ($tugas->guru_nip != $guru->nip) {
             abort(403, 'Anda tidak memiliki akses ke tugas ini');
         }
 
@@ -67,7 +67,7 @@ class PengumpulanTugasController extends Controller
         $tugas = Tugas::findOrFail($id);
 
         // Authorization
-        if ($tugas->guru_nik != $user->guru->nik) {
+        if ($tugas->guru_nip != $user->guru->nip) {
             abort(403, 'Anda tidak memiliki akses ke tugas ini');
         }
 
@@ -113,7 +113,7 @@ class PengumpulanTugasController extends Controller
         $tugas = $pengumpulan->tugas;
 
         // Authorization: hanya guru pemilik tugas
-        if ($tugas->guru_nik != $user->guru->nik) {
+        if ($tugas->guru_nip != $user->guru->nip) {
             abort(403, 'Anda tidak memiliki akses');
         }
 
@@ -136,7 +136,7 @@ class PengumpulanTugasController extends Controller
 
         // Pastikan pengumpulan untuk tugas milik guru ini
         $tugas = $pengumpulan->tugas;
-        if ($tugas->guru_nik != $guru->nik) {
+        if ($tugas->guru_nip != $guru->nip) {
             abort(403, 'Anda tidak memiliki akses');
         }
 
@@ -163,7 +163,7 @@ class PengumpulanTugasController extends Controller
 
         // Pastikan pengumpulan untuk tugas milik guru ini
         $tugas = $pengumpulan->tugas;
-        if ($tugas->guru_nik != $guru->nik) {
+        if ($tugas->guru_nip != $guru->nip) {
             abort(403, 'Anda tidak memiliki akses');
         }
 
@@ -196,7 +196,7 @@ class PengumpulanTugasController extends Controller
 
         // Pastikan pengumpulan untuk tugas milik guru ini
         $tugas = $pengumpulan->tugas;
-        if ($tugas->guru_nik != $guru->nik) {
+        if ($tugas->guru_nip != $guru->nip) {
             abort(403, 'Anda tidak memiliki akses');
         }
 
@@ -214,7 +214,7 @@ class PengumpulanTugasController extends Controller
             abort(403, 'Anda tidak memiliki akses guru');
         }
 
-        if ($tugas->guru_nik != $guru->nik) {
+        if ($tugas->guru_nip != $guru->nip) {
             abort(403, 'Anda tidak memiliki akses ke tugas ini');
         }
 
@@ -247,7 +247,7 @@ class PengumpulanTugasController extends Controller
             abort(403, 'Anda tidak memiliki akses guru');
         }
 
-        if ($tugas->guru_nik != $guru->nik) {
+        if ($tugas->guru_nip != $guru->nip) {
             abort(403, 'Anda tidak memiliki akses ke tugas ini');
         }
 

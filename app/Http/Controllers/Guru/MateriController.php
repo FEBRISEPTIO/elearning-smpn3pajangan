@@ -22,7 +22,7 @@ class MateriController extends Controller
         }
 
         // Query dasar
-        $query = Materi::where('guru_nik', $guru->nik)
+        $query = Materi::where('guru_nip', $guru->nip)
             ->with(['kelas', 'mataPelajaran']);
 
         // Filter berdasarkan kelas jika dipilih
@@ -91,7 +91,7 @@ class MateriController extends Controller
             'deskripsi' => $request->deskripsi,
             'mapel_id' => $request->mata_pelajaran_id,
             'kelas_id' => $request->kelas_id,
-            'guru_nik' => $guru->nik,
+            'guru_nip' => $guru->nip,
             'materi' => $request->konten_teks,
         ];
 
@@ -119,7 +119,7 @@ class MateriController extends Controller
     public function show(Materi $materi)
     {
         // Pastikan hanya guru yang membuat materi yang bisa melihat
-        if (Auth::user()->guru->nik != $materi->guru_nik) {
+        if (Auth::user()->guru->nip != $materi->guru_nip) {
             abort(403, 'Anda tidak memiliki akses ke materi ini');
         }
 
@@ -137,7 +137,7 @@ class MateriController extends Controller
     public function edit(Materi $materi)
     {
         // Pastikan hanya guru yang membuat materi yang bisa edit
-        if (Auth::user()->guru->nik != $materi->guru_nik) {
+        if (Auth::user()->guru->nip != $materi->guru_nip) {
             abort(403, 'Anda tidak memiliki akses ke materi ini');
         }
 
@@ -150,7 +150,7 @@ class MateriController extends Controller
     public function update(Request $request, Materi $materi)
     {
         // Pastikan hanya guru yang membuat materi yang bisa update
-        if (Auth::user()->guru->nik != $materi->guru_nik) {
+        if (Auth::user()->guru->nip != $materi->guru_nip) {
             abort(403, 'Anda tidak memiliki akses ke materi ini');
         }
 
@@ -204,7 +204,7 @@ class MateriController extends Controller
     public function destroy(Materi $materi)
     {
         // Pastikan hanya guru yang membuat materi yang bisa hapus
-        if (Auth::user()->guru->nik != $materi->guru_nik) {
+        if (Auth::user()->guru->nip != $materi->guru_nip) {
             abort(403, 'Anda tidak memiliki akses ke materi ini');
         }
 
@@ -225,7 +225,7 @@ class MateriController extends Controller
     public function storeKomentar(Request $request, Materi $materi)
     {
         // Pastikan hanya guru yang membuat materi yang bisa komentar
-        if (Auth::user()->guru->nik != $materi->guru_nik) {
+        if (Auth::user()->guru->nip != $materi->guru_nip) {
             abort(403, 'Anda tidak memiliki akses ke materi ini');
         }
 
@@ -253,12 +253,12 @@ class MateriController extends Controller
         $materi = Materi::find($komentar->materi_id);
 
         // Pastikan komentar ini milik materi yang dibuat oleh guru ini
-        if (!$materi || Auth::user()->guru->nik != $materi->guru_nik) {
+        if (!$materi || Auth::user()->guru->nip != $materi->guru_nip) {
             abort(403, 'Anda tidak memiliki akses ke komentar ini');
         }
 
         // Cek apakah guru adalah pembuat materi atau pemilik komentar
-        if ($materi->guru_nik == Auth::user()->guru->nik) {
+        if ($materi->guru_nip == Auth::user()->guru->nip) {
             // Guru adalah pembuat materi, bisa hapus semua komentar
             $komentar->delete();
         } elseif ($komentar->user_type === 'guru' && $komentar->user_id == Auth::id()) {

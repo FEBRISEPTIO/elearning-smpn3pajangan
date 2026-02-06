@@ -16,11 +16,42 @@ use Illuminate\Support\Facades\Log;
 class SiswaController extends Controller
 {
     // Menampilkan daftar siswa
-    public function index()
+    public function index(Request $request)
     {
-        $siswa = Siswa::with('kelas')->get();
-        $kelas = Kelas::all();
-        return view('admin.siswa.index', compact('siswa', 'kelas'));
+        $query = Siswa::with('kelas');
+
+        // Pencarian
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('nama', 'like', "%{$search}%")
+                    ->orWhere('nisn', 'like', "%{$search}%")
+                    ->orWhere('nis', 'like', "%{$search}%");
+            });
+        }
+
+        // Filter Kelas
+        if ($request->filled('kelas_id')) {
+            $query->where('kelas_id', $request->kelas_id);
+        }
+
+        // Filter Tingkat
+        if ($request->filled('tingkat')) {
+            $query->where('tingkat', $request->tingkat);
+        }
+
+        // Filter Jenis Kelamin
+        if ($request->filled('jenis_kelamin')) {
+            $query->where('jnsklmn', $request->jenis_kelamin);
+        }
+
+        $siswa = $query->orderBy('nama')->paginate(10)->withQueryString();
+        $kelas = Kelas::orderBy('kelas')->get();
+
+        // Get unique tingkat values for filter dropdown
+        $tingkatList = Siswa::select('tingkat')->distinct()->whereNotNull('tingkat')->orderBy('tingkat')->pluck('tingkat');
+
+        return view('admin.siswa.index', compact('siswa', 'kelas', 'tingkatList'));
     }
 
     // Menampilkan form tambah siswa
@@ -74,7 +105,6 @@ class SiswaController extends Controller
 
             return redirect()->route('admin.siswa.index')
                 ->with('success', 'Data siswa berhasil ditambahkan!');
-
         } catch (\Exception $e) {
             DB::rollback();
             Log::error('Gagal menyimpan siswa: ' . $e->getMessage());
@@ -139,7 +169,6 @@ class SiswaController extends Controller
 
             return redirect()->route('admin.siswa.index')
                 ->with('success', 'Data siswa berhasil diupdate!');
-
         } catch (\Exception $e) {
             DB::rollback();
             Log::error('Gagal update siswa: ' . $e->getMessage());
@@ -168,7 +197,6 @@ class SiswaController extends Controller
 
             return redirect()->route('admin.siswa.index')
                 ->with('success', 'Data siswa berhasil dihapus!');
-
         } catch (\Exception $e) {
             DB::rollback();
             Log::error('Gagal hapus siswa: ' . $e->getMessage());
@@ -211,194 +239,59 @@ class SiswaController extends Controller
     public function import(Request $request)
     {
         $request->validate([
-            'file' => 'required|mimes:csv,txt|max:5120'
+            'file' => 'required|mimes:csv,xls,xlsx|max:5120'
         ]);
 
-        $file = $request->file('file');
-
-        DB::beginTransaction();
-
         try {
-            // Baca file CSV
-            $csvData = $this->readCSV($file->getPathname());
+            set_time_limit(300); // 5 menit untuk file besar
+            Excel::import(new SiswaImport, $request->file('file'));
 
-            if (empty($csvData)) {
-                return redirect()->back()->with('error', 'File CSV kosong');
-            }
-
-            $headers = array_map('strtolower', $csvData[0]);
-            $rows = array_slice($csvData, 1);
-
-            $successCount = 0;
-            $errors = [];
-
-            foreach ($rows as $index => $row) {
-                $rowNumber = $index + 2;
-
-                try {
-                    // Skip baris kosong
-                    if (empty(array_filter($row))) {
-                        continue;
-                    }
-
-                    // Gabung header dengan data
-                    $data = array_combine($headers, $row);
-
-                    // Proses data
-                    $result = $this->processSiswaRow($data, $rowNumber);
-
-                    if ($result['success']) {
-                        $successCount++;
-                    } else {
-                        $errors[] = $result['error'];
-                    }
-
-                } catch (\Exception $e) {
-                    $errors[] = "Baris {$rowNumber}: " . $e->getMessage();
-                }
-            }
-
-            DB::commit();
-
-            // Tampilkan hasil
-            if ($successCount > 0) {
-                $message = "✅ Berhasil mengimport {$successCount} data siswa.";
-                if (!empty($errors)) {
-                    session()->flash('import_errors', array_slice($errors, 0, 10));
-                }
-                return redirect()->route('admin.siswa.index')->with('success', $message);
-            } else {
-                return redirect()->back()->with(
-                    'error',
-                    '❌ Tidak ada data yang berhasil diimport. ' .
-                    (empty($errors) ? '' : 'Error: ' . implode(', ', array_slice($errors, 0, 3)))
-                );
-            }
-
+            return redirect()->route('admin.siswa.index')->with('success', '✅ Data siswa berhasil diimport.');
         } catch (\Exception $e) {
-            DB::rollback();
-            Log::error('Import CSV error: ' . $e->getMessage());
+            Log::error('Import Excel error: ' . $e->getMessage());
             return redirect()->back()->with('error', '❌ Gagal import: ' . $e->getMessage());
         }
     }
 
-    // BACA FILE CSV
-    private function readCSV($filePath)
-    {
-        $data = [];
-
-        if (($handle = fopen($filePath, 'r')) !== false) {
-            while (($row = fgetcsv($handle, 1000, ',')) !== false) {
-                $data[] = array_map('trim', $row);
-            }
-            fclose($handle);
-        }
-
-        return $data;
-    }
-
-    // PROSES SATU BARIS DATA
-    private function processSiswaRow($data, $rowNumber)
-    {
-        // Ambil data
-        $nisn = $data['nisn'] ?? $data['nisn_siswa'] ?? '';
-        $nis = $data['nis'] ?? $data['nomor_induk'] ?? '';
-        $nama = $data['nama'] ?? $data['nama_siswa'] ?? $data['nama_lengkap'] ?? '';
-        $email = $data['email'] ?? '';
-        $noTelp = $data['notelp'] ?? $data['telepon'] ?? $data['nohp'] ?? '';
-        $alamat = $data['alamat'] ?? '';
-        $jenisKelamin = $data['jeniskelamin'] ?? $data['jk'] ?? 'L';
-        $kelas = $data['kelas'] ?? $data['nama_kelas'] ?? '';
-
-        // Validasi wajib
-        if (empty($nisn) || empty($nis) || empty($nama)) {
-            return [
-                'success' => false,
-                'error' => "Baris {$rowNumber}: NISN/NIS/Nama tidak boleh kosong"
-            ];
-        }
-
-        // Validasi format NISN (10 digit)
-        if (!preg_match('/^\d{10}$/', $nisn)) {
-            return [
-                'success' => false,
-                'error' => "Baris {$rowNumber}: NISN harus 10 digit angka"
-            ];
-        }
-
-        // Validasi format NIS (8 digit)
-        if (!preg_match('/^\d{8}$/', $nis)) {
-            return [
-                'success' => false,
-                'error' => "Baris {$rowNumber}: NIS harus 8 digit angka"
-            ];
-        }
-
-        // Cek duplikasi
-        if (Siswa::where('nisn', $nisn)->exists()) {
-            return [
-                'success' => false,
-                'error' => "Baris {$rowNumber}: NISN {$nisn} sudah terdaftar"
-            ];
-        }
-
-        // Normalize jenis kelamin
-        $jnsklmn = strtoupper(substr($jenisKelamin, 0, 1));
-        if (!in_array($jnsklmn, ['L', 'P'])) {
-            $jnsklmn = 'L';
-        }
-
-        // Cari kelas
-        $kelasModel = Kelas::where('kelas', 'like', "%{$kelas}%")
-            ->orWhere('nama_kelas', 'like', "%{$kelas}%")
-            ->first();
-
-        if (!$kelasModel) {
-            return [
-                'success' => false,
-                'error' => "Baris {$rowNumber}: Kelas '{$kelas}' tidak ditemukan"
-            ];
-        }
-
-        // Simpan siswa
-        $siswa = Siswa::create([
-            'nisn' => $nisn,
-            'nis' => $nis,
-            'nama' => $nama,
-            'email' => $email ?: null,
-            'no_telp' => $noTelp ?: null,
-            'alamat' => $alamat ?: null,
-            'jnsklmn' => $jnsklmn,
-            'kelas_id' => $kelasModel->id,
-            'foto' => null,
-        ]);
-
-        // Buat akun login
-        Akun::create([
-            'username' => $nisn,
-            'password' => Hash::make($nis),
-            'user_type' => 'siswa',
-            'user_id' => $siswa->nisn,
-            'role_id' => 3,
-        ]);
-
-        Log::info("Imported siswa: {$nama} ({$nisn})");
-
-        return ['success' => true];
-    }
-
-    // DOWNLOAD TEMPLATE CSV
+    // DOWNLOAD TEMPLATE EXCEL
     public function downloadTemplate()
     {
-        $csv = "nisn,nis,nama,email,notelp,alamat,jeniskelamin,kelas\n";
-        $csv .= "1234567890,12345678,Contoh Siswa 1,siswa1@email.com,081234567890,Jl. Contoh No.1,L,10 IPA 1\n";
-        $csv .= "2234567891,22345678,Contoh Siswa 2,siswa2@email.com,081298765432,Jl. Contoh No.2,P,11 IPA 2";
+        // Template sederhana dengan header yang diharapkan
+        // No, Nama Siswa, NIS, NISN, JK, TTL, Agama, Tingkat, Kelas, Edit
+        // TTL format: "Kota, DD-MM-YYYY"
+        return response()->streamDownload(function () {
+            $handle = fopen('php://output', 'w');
 
-        $filename = 'template_siswa_' . date('Ymd_His') . '.csv';
+            // Header
+            fputcsv($handle, ['No', 'Nama Siswa', 'NIS', 'NISN', 'JK', 'TTL', 'Agama', 'Tingkat', 'Kelas']);
 
-        return response($csv)
-            ->header('Content-Type', 'text/csv')
-            ->header('Content-Disposition', "attachment; filename={$filename}");
+            // Contoh Data 1
+            fputcsv($handle, [
+                '1',
+                'Contoh Siswa 1',
+                '12345',
+                '0012345678',
+                'L',
+                'Bantul, 12-05-2010',
+                'Islam',
+                '7',
+                '7A'
+            ]);
+
+            // Contoh Data 2
+            fputcsv($handle, [
+                '2',
+                'Contoh Siswa 2',
+                '12346',
+                '0012345679',
+                'P',
+                'Sleman, 20-11-2010',
+                'Kristen',
+                '7',
+                '7B'
+            ]);
+
+            fclose($handle);
+        }, 'template_siswa_v2.csv');
     }
-
 }

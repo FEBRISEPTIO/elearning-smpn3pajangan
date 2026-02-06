@@ -18,7 +18,7 @@ class Materi extends Model
         'file',
         'kelas_id',
         'mapel_id',
-        'guru_nik',
+        'guru_nip',
         'views',
         'downloads'
     ];
@@ -44,7 +44,7 @@ class Materi extends Model
      */
     public function guru()
     {
-        return $this->belongsTo(Guru::class, 'guru_nik', 'nik');
+        return $this->belongsTo(Guru::class, 'guru_nip', 'nip');
     }
 
     /**

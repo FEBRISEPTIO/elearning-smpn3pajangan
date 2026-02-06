@@ -87,7 +87,7 @@
                         <tr>
                             <th scope="col"
                                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                NIK
+                                NIP
                             </th>
                             <th scope="col"
                                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -115,7 +115,7 @@
                         @forelse($guru as $item)
                             <tr class="hover:bg-gray-50 transition">
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                    {{ $item->nik }}
+                                    {{ $item->nip }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                     {{ $item->nama }}
@@ -134,12 +134,12 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                     <div class="flex items-center space-x-3">
-                                        <a href="{{ route('admin.guru.edit', $item->nik) }}"
+                                        <a href="{{ route('admin.guru.edit', $item->nip) }}"
                                             class="text-blue-600 hover:text-blue-900 inline-flex items-center">
                                             <i class="fas fa-edit mr-1"></i>
                                             <span class="hidden sm:inline">Edit</span>
                                         </a>
-                                        <form action="{{ route('admin.guru.destroy', $item->nik) }}" method="POST"
+                                        <form action="{{ route('admin.guru.destroy', $item->nip) }}" method="POST"
                                             class="inline">
                                             @csrf
                                             @method('DELETE')
@@ -179,8 +179,8 @@
                         <div>
                             <h4 class="text-sm font-semibold text-blue-800 mb-1">Informasi Login Guru:</h4>
                             <div class="text-sm text-blue-700 space-y-1">
-                                <p><strong class="font-medium">Username:</strong> NIK</p>
-                                <p><strong class="font-medium">Password:</strong> NIK (bisa direset melalui tombol reset
+                                <p><strong class="font-medium">Username:</strong> NIP</p>
+                                <p><strong class="font-medium">Password:</strong> NIP (bisa direset melalui tombol reset
                                     password)</p>
                             </div>
                         </div>

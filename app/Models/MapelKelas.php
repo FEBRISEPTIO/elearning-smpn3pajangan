@@ -14,7 +14,7 @@ class MapelKelas extends Model
     protected $fillable = [
         'mapel_id',
         'kelas_id',
-        'guru_nik'
+        'guru_nip'
     ];
 
     // Relasi ke mata pelajaran
@@ -32,6 +32,6 @@ class MapelKelas extends Model
     // Relasi ke guru
     public function guru()
     {
-        return $this->belongsTo(Guru::class, 'guru_nik', 'nik');
+        return $this->belongsTo(Guru::class, 'guru_nip', 'nip');
     }
 }

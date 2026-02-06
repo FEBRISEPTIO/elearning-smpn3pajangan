@@ -27,40 +27,40 @@
             </div>
 
             @if (session('success'))
-                <div class="bg-green-50 border-l-4 border-green-500 p-4 mb-6">
-                    <div class="flex">
-                        <div class="flex-shrink-0">
-                            <i class="fas fa-check-circle text-green-500"></i>
-                        </div>
-                        <div class="ml-3">
-                            <p class="text-sm font-medium text-green-800">{{ session('success') }}</p>
-                        </div>
+            <div class="bg-green-50 border-l-4 border-green-500 p-4 mb-6">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-check-circle text-green-500"></i>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium text-green-800">{{ session('success') }}</p>
                     </div>
                 </div>
+            </div>
             @endif
 
             @if ($errors->any())
-                <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-6">
-                    <div class="flex">
-                        <div class="flex-shrink-0">
-                            <i class="fas fa-exclamation-circle text-red-500"></i>
-                        </div>
-                        <div class="ml-3">
-                            <h3 class="text-sm font-medium text-red-800">Ada kesalahan dalam pengisian form</h3>
-                            <div class="mt-2 text-sm text-red-700">
-                                <ul class="list-disc list-inside space-y-1">
-                                    @foreach ($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
-                                </ul>
-                            </div>
+            <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-6">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-exclamation-circle text-red-500"></i>
+                    </div>
+                    <div class="ml-3">
+                        <h3 class="text-sm font-medium text-red-800">Ada kesalahan dalam pengisian form</h3>
+                        <div class="mt-2 text-sm text-red-700">
+                            <ul class="list-disc list-inside space-y-1">
+                                @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
                         </div>
                     </div>
                 </div>
+            </div>
             @endif
 
             <!-- Form Update -->
-            <form action="{{ route('admin.guru.update', $guru->nik) }}" method="POST">
+            <form action="{{ route('admin.guru.update', $guru->nip) }}" method="POST">
                 @csrf
                 @method('PUT')
 
@@ -69,8 +69,8 @@
                     <div class="space-y-4">
                         <!-- NIK (readonly) -->
                         <div>
-                            <label for="nik" class="block text-sm font-medium text-gray-700 mb-1">NIK</label>
-                            <input type="text" id="nik" value="{{ $guru->nik }}" readonly
+                            <label for="nip" class="block text-sm font-medium text-gray-700 mb-1">NIP</label>
+                            <input type="text" id="nip" value="{{ $guru->nip }}" readonly
                                 class="w-full px-4 py-2 border border-gray-300 bg-gray-50 rounded-lg">
                         </div>
 
@@ -144,8 +144,8 @@
                         <div>
                             <h4 class="text-sm font-semibold text-blue-800 mb-1">Informasi Login:</h4>
                             <div class="text-sm text-blue-700 space-y-1">
-                                <p><strong class="font-medium">Username:</strong> {{ $guru->nik }}</p>
-                                <p><strong class="font-medium">Password Saat Ini:</strong> {{ $guru->nik }}</p>
+                                <p><strong class="font-medium text-blue-800">Username:</strong> {{ $guru->nip }}</p>
+                                <p><strong class="font-medium text-blue-800">Password Saat Ini:</strong> {{ $guru->nip }}</p>
                             </div>
                             <p class="text-xs text-blue-600 mt-2">
                                 Guru dapat mengganti password setelah login.
@@ -158,13 +158,13 @@
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pt-4 border-t">
                     <!-- Reset Password Button -->
                     <button type="button"
-                        onclick="if(confirm('Reset password ke NIK?')) document.getElementById('reset-form').submit();"
+                        onclick="if(confirm('Reset password ke NIP?')) document.getElementById('reset-form').submit();"
                         class="bg-amber-600 hover:bg-amber-700 text-white px-6 py-3 rounded-lg text-sm font-medium inline-flex items-center transition w-full md:w-auto justify-center">
                         <i class="fas fa-key mr-2"></i>Reset Password
                     </button>
 
                     <!-- Form reset password terpisah -->
-                    <form id="reset-form" action="{{ route('admin.guru.reset-password', $guru->nik) }}" method="POST"
+                    <form id="reset-form" action="{{ route('admin.guru.reset-password', $guru->nip) }}" method="POST"
                         class="hidden">
                         @csrf
                     </form>

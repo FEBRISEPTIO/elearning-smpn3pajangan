@@ -9,12 +9,14 @@ class Guru extends Model
 {
     use HasFactory;
 
-    protected $table = 'guru'; // Explicitly set table name
-    protected $primaryKey = 'nik';
+    protected $table = 'guru';
+    protected $primaryKey = 'nip';
+    public $incrementing = false;
+    protected $keyType = 'string';
 
     protected $fillable = [
         'user_id',
-        'nik',
+        'nip',
         'nama',
         'email',
         'jnsklmn',
@@ -22,29 +24,25 @@ class Guru extends Model
         'foto'
     ];
 
-    
+
     public function akun()
-{
-    return $this->belongsTo(Akun::class, 'nik', 'user_id');
-}
-    // public function user()
-    // {
-    //     return $this->belongsTo(User::class);
-    // }
+    {
+        return $this->belongsTo(Akun::class, 'nip', 'user_id');
+    }
 
     public function mapelKelas()
     {
-        return $this->hasMany(MapelKelas::class, 'guru_nik', 'nik');
+        return $this->hasMany(MapelKelas::class, 'guru_nip', 'nip');
     }
 
     public function materi()
     {
-        return $this->hasMany(Materi::class, 'guru_nik', 'nik');
+        return $this->hasMany(Materi::class, 'guru_nip', 'nip');
     }
 
     public function tugas()
     {
-        return $this->hasMany(Tugas::class, 'guru_id');
+        return $this->hasMany(Tugas::class, 'guru_nip', 'nip');
     }
 
     public function nilais()

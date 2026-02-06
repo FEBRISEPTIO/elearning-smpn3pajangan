@@ -55,23 +55,23 @@
             </div>
 
             @if ($errors->any())
-                <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-6">
-                    <div class="flex">
-                        <div class="flex-shrink-0">
-                            <i class="fas fa-exclamation-circle text-red-500"></i>
-                        </div>
-                        <div class="ml-3">
-                            <h3 class="text-sm font-medium text-red-800">Ada kesalahan dalam pengisian form</h3>
-                            <div class="mt-2 text-sm text-red-700">
-                                <ul class="list-disc list-inside space-y-1">
-                                    @foreach ($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
-                                </ul>
-                            </div>
+            <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-6">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-exclamation-circle text-red-500"></i>
+                    </div>
+                    <div class="ml-3">
+                        <h3 class="text-sm font-medium text-red-800">Ada kesalahan dalam pengisian form</h3>
+                        <div class="mt-2 text-sm text-red-700">
+                            <ul class="list-disc list-inside space-y-1">
+                                @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
                         </div>
                     </div>
                 </div>
+            </div>
             @endif
 
             <!-- Form -->
@@ -125,6 +125,44 @@
                                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
                                 placeholder="nama@email.com">
                         </div>
+
+                        <!-- Tempat Lahir -->
+                        <div>
+                            <label for="tempat_lahir" class="block text-sm font-medium text-gray-700 mb-1">
+                                Tempat Lahir
+                            </label>
+                            <input type="text" id="tempat_lahir" name="tempat_lahir"
+                                value="{{ old('tempat_lahir', $siswa->tempat_lahir) }}"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+                                placeholder="Kota Kelahiran">
+                        </div>
+
+                        <!-- Tanggal Lahir -->
+                        <div>
+                            <label for="tanggal_lahir" class="block text-sm font-medium text-gray-700 mb-1">
+                                Tanggal Lahir
+                            </label>
+                            <input type="date" id="tanggal_lahir" name="tanggal_lahir"
+                                value="{{ old('tanggal_lahir', $siswa->tanggal_lahir) }}"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+                        </div>
+
+                        <!-- Agama -->
+                        <div>
+                            <label for="agama" class="block text-sm font-medium text-gray-700 mb-1">
+                                Agama
+                            </label>
+                            <select id="agama" name="agama"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+                                <option value="">Pilih Agama</option>
+                                <option value="Islam" {{ old('agama', $siswa->agama) == 'Islam' ? 'selected' : '' }}>Islam</option>
+                                <option value="Kristen" {{ old('agama', $siswa->agama) == 'Kristen' ? 'selected' : '' }}>Kristen</option>
+                                <option value="Katolik" {{ old('agama', $siswa->agama) == 'Katolik' ? 'selected' : '' }}>Katolik</option>
+                                <option value="Hindu" {{ old('agama', $siswa->agama) == 'Hindu' ? 'selected' : '' }}>Hindu</option>
+                                <option value="Buddha" {{ old('agama', $siswa->agama) == 'Buddha' ? 'selected' : '' }}>Buddha</option>
+                                <option value="Konghucu" {{ old('agama', $siswa->agama) == 'Konghucu' ? 'selected' : '' }}>Konghucu</option>
+                            </select>
+                        </div>
                     </div>
 
                     <!-- Kolom 2 -->
@@ -138,11 +176,25 @@
                                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
                                 <option value="">Pilih Kelas</option>
                                 @foreach ($kelas as $item)
-                                    <option value="{{ $item->id }}"
-                                        {{ old('kelas_id', $siswa->kelas_id) == $item->id ? 'selected' : '' }}>
-                                        {{ $item->kelas }}
-                                    </option>
+                                <option value="{{ $item->id }}"
+                                    {{ old('kelas_id', $siswa->kelas_id) == $item->id ? 'selected' : '' }}>
+                                    {{ $item->kelas }}
+                                </option>
                                 @endforeach
+                            </select>
+                        </div>
+
+                        <!-- Tingkat -->
+                        <div>
+                            <label for="tingkat" class="block text-sm font-medium text-gray-700 mb-1">
+                                Tingkat
+                            </label>
+                            <select id="tingkat" name="tingkat"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+                                <option value="">Pilih Tingkat</option>
+                                <option value="7" {{ old('tingkat', $siswa->tingkat) == '7' ? 'selected' : '' }}>Kelas 7</option>
+                                <option value="8" {{ old('tingkat', $siswa->tingkat) == '8' ? 'selected' : '' }}>Kelas 8</option>
+                                <option value="9" {{ old('tingkat', $siswa->tingkat) == '9' ? 'selected' : '' }}>Kelas 9</option>
                             </select>
                         </div>
 

@@ -24,6 +24,7 @@ Route::get('/', function () {
 // Public routes
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->name('login.submit');
+Route::post('/upload-image', [App\Http\Controllers\UploadController::class, 'uploadImage'])->name('upload.image')->middleware('auth');
 
 // Protected routes
 Route::middleware(['auth'])->group(function () {
@@ -63,10 +64,10 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/guru', [GuruController::class, 'index'])->name('guru.index');
         Route::get('/guru/create', [GuruController::class, 'create'])->name('guru.create');
         Route::post('/guru', [GuruController::class, 'store'])->name('guru.store');
-        Route::get('/guru/{nik}/edit', [GuruController::class, 'edit'])->name('guru.edit');
-        Route::put('/guru/{nik}', [GuruController::class, 'update'])->name('guru.update');
-        Route::delete('/guru/{nik}', [GuruController::class, 'destroy'])->name('guru.destroy');
-        Route::post('/guru/{nik}/reset-password', [GuruController::class, 'resetPassword'])->name('guru.reset-password');
+        Route::get('/guru/{nip}/edit', [GuruController::class, 'edit'])->name('guru.edit');
+        Route::put('/guru/{nip}', [GuruController::class, 'update'])->name('guru.update');
+        Route::delete('/guru/{nip}', [GuruController::class, 'destroy'])->name('guru.destroy');
+        Route::post('/guru/{nip}/reset-password', [GuruController::class, 'resetPassword'])->name('guru.reset-password');
 
         // Kelas
         Route::resource('kelas', KelasController::class)->except(['show']);
@@ -89,8 +90,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/tugas/{id}/pengumpulan', [TugasController::class, 'pengumpulan'])->name('tugas.pengumpulan');
         Route::post('/tugas/{id}/nilai', [TugasController::class, 'beriNilai'])->name('tugas.nilai');
         Route::delete('/pengumpulan/{pengumpulan}', [TugasController::class, 'hapusPengumpulan'])->name('tugas.hapus-pengumpulan');
-        // Route::get('/pengumpulan/{pengumpulan}/download', [TugasController::class, 'downloadPengumpulan'])
-        //     ->name('guru.tugas.download-pengumpulan');
+        Route::get('/pengumpulan/{pengumpulan}/download', [TugasController::class, 'downloadPengumpulan'])->name('guru.tugas.download-pengumpulan');
         // Nilai
         Route::get('/nilai', [GuruNilaiController::class, 'index'])->name('nilai.index');
         Route::get('/nilai/{siswa}', [GuruNilaiController::class, 'show'])->name('nilai.show');

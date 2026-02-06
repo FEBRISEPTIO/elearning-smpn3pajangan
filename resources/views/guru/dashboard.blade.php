@@ -86,7 +86,7 @@
                                 <div class="flex justify-between items-center py-3 border-b border-gray-100">
                                     <span class="text-sm font-medium text-gray-600">NIK</span>
                                     <span
-                                        class="text-sm font-semibold text-gray-900">{{ $guruData->nik ?? '-' }}</span>
+                                        class="text-sm font-semibold text-gray-900">{{ $guruData->nip ?? '-' }}</span>
                                 </div>
                                 <div class="flex justify-between items-center py-3 border-b border-gray-100">
                                     <span class="text-sm font-medium text-gray-600">Nama</span>

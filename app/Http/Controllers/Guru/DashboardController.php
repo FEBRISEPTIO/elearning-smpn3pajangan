@@ -30,14 +30,14 @@ class DashboardController extends Controller
 
         $data = [
             'guru' => $guru,
-            'totalMateri' => Materi::where('guru_nik', $guru->id)->count(),
-            'totalTugas' => Tugas::where('guru_nik', $guru->id)->count(),
+            'totalMateri' => Materi::where('guru_nip', $guru->id)->count(),
+            'totalTugas' => Tugas::where('guru_nip', $guru->id)->count(),
             'totalSiswa' => $totalSiswa,
-            'recentMateri' => Materi::where('guru_nik', $guru->id)
+            'recentMateri' => Materi::where('guru_nip', $guru->id)
                 ->orderBy('created_at', 'desc')
                 ->limit(5)
                 ->get(),
-            'recentTugas' => Tugas::where('guru_nik', $guru->id)
+            'recentTugas' => Tugas::where('guru_nip', $guru->id)
                 ->orderBy('created_at', 'desc')
                 ->limit(5)
                 ->get(),

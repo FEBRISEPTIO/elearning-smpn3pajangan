@@ -23,7 +23,11 @@ class Siswa extends Model
         'kelas_id',
         'alamat',
         'no_telp',
-        'foto'
+        'foto',
+        'tempat_lahir',
+        'tanggal_lahir',
+        'agama',
+        'tingkat'
     ];
 
     // Relasi dengan kelas

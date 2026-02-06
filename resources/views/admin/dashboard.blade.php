@@ -430,7 +430,7 @@
                                             <p class="text-sm font-medium text-gray-900">{{ $guru->nama }}</p>
                                             <div class="flex items-center text-xs text-gray-500">
                                                 <i class="fas fa-id-card mr-1"></i>
-                                                <span>{{ $guru->nik }}</span>
+                                                <span>{{ $guru->nip }}</span>
                                                 <span class="mx-2">•</span>
                                                 <i class="fas fa-envelope mr-1"></i>
                                                 <span>{{ $guru->email }}</span>

@@ -55,23 +55,23 @@
             </div>
 
             @if ($errors->any())
-                <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-6">
-                    <div class="flex">
-                        <div class="flex-shrink-0">
-                            <i class="fas fa-exclamation-circle text-red-500"></i>
-                        </div>
-                        <div class="ml-3">
-                            <h3 class="text-sm font-medium text-red-800">Ada kesalahan dalam pengisian form</h3>
-                            <div class="mt-2 text-sm text-red-700">
-                                <ul class="list-disc list-inside space-y-1">
-                                    @foreach ($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
-                                </ul>
-                            </div>
+            <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-6">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-exclamation-circle text-red-500"></i>
+                    </div>
+                    <div class="ml-3">
+                        <h3 class="text-sm font-medium text-red-800">Ada kesalahan dalam pengisian form</h3>
+                        <div class="mt-2 text-sm text-red-700">
+                            <ul class="list-disc list-inside space-y-1">
+                                @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
                         </div>
                     </div>
                 </div>
+            </div>
             @endif
 
             <!-- Form -->
@@ -80,15 +80,15 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     <!-- Kolom 1 -->
                     <div class="space-y-4">
-                        <!-- NIK -->
+                        <!-- nip -->
                         <div>
-                            <label for="nik" class="block text-sm font-medium text-gray-700 mb-1">
-                                NIK <span class="text-red-500">*</span>
+                            <label for="nip" class="block text-sm font-medium text-gray-700 mb-1">
+                                nip <span class="text-red-500">*</span>
                             </label>
-                            <input type="text" id="nik" name="nik" value="{{ old('nik') }}" required
+                            <input type="text" id="nip" name="nip" value="{{ old('nip') }}" required
                                 maxlength="20"
                                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-                                placeholder="Masukkan NIK guru">
+                                placeholder="Masukkan nip guru">
                             <p class="mt-1 text-xs text-gray-500">Nomor Induk Guru (hanya angka)</p>
                         </div>
 
@@ -165,8 +165,8 @@
                         <div>
                             <h4 class="text-sm font-semibold text-blue-800 mb-1">Informasi Login:</h4>
                             <div class="text-sm text-blue-700 space-y-1">
-                                <p><strong class="font-medium">Username:</strong> NIK</p>
-                                <p><strong class="font-medium">Password:</strong> NIK</p>
+                                <p><strong class="font-medium">Username:</strong> nip</p>
+                                <p><strong class="font-medium">Password:</strong> nip</p>
                             </div>
                             <p class="text-xs text-blue-600 mt-2">
                                 Guru dapat mengganti password setelah login pertama kali.

@@ -31,7 +31,7 @@ class GuruController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nik' => 'required|string|max:20|unique:guru,nik',
+            'nip' => 'required|string|max:20|unique:guru,nip',
             'nama' => 'required|string|max:100',
             'email' => 'required|email|max:100|unique:guru,email',
             'jnsklmn' => 'required|in:L,P',
@@ -44,7 +44,7 @@ class GuruController extends Controller
         try {
             // Create guru
             $guru = Guru::create([
-                'nik' => $request->nik,
+                'nip' => $request->nip,
                 'nama' => $request->nama,
                 'email' => $request->email,
                 'jnsklmn' => $request->jnsklmn,
@@ -54,10 +54,10 @@ class GuruController extends Controller
 
             // Create akun untuk guru
             $akun = Akun::create([
-                'username' => $request->nik, // Username = NIK
-                'password' => Hash::make($request->nik), // Password = NIK
+                'username' => $request->nip, // Username = NIP
+                'password' => Hash::make($request->nip), // Password = NIP
                 'user_type' => 'guru',
-                'user_id' => $guru->nik,
+                'user_id' => $guru->nip,
                 'role_id' => 2, // Role ID untuk guru
             ]);
 
@@ -65,7 +65,6 @@ class GuruController extends Controller
 
             return redirect()->route('admin.guru.index')
                 ->with('success', 'Data guru berhasil ditambahkan!');
-
         } catch (\Exception $e) {
             DB::rollback();
 
@@ -76,21 +75,21 @@ class GuruController extends Controller
     }
 
     // Menampilkan form edit guru
-    public function edit($nik)
+    public function edit($nip)
     {
-        $guru = Guru::where('nik', $nik)->firstOrFail();
+        $guru = Guru::where('nip', $nip)->firstOrFail();
         $mapel = MataPelajaran::all();
         return view('admin.guru.edit', compact('guru', 'mapel'));
     }
 
     // Update data guru
-    public function update(Request $request, $nik)
+    public function update(Request $request, $nip)
     {
-        $guru = Guru::where('nik', $nik)->firstOrFail();
+        $guru = Guru::where('nip', $nip)->firstOrFail();
 
         $request->validate([
             'nama' => 'required|string|max:100',
-            'email' => 'required|email|max:100|unique:guru,email,' . $guru->nik . ',nik',
+            'email' => 'required|email|max:100|unique:guru,email,' . $guru->nip . ',nip',
             'jnsklmn' => 'required|in:L,P',
             'alamat' => 'nullable|string',
             'no_telp' => 'nullable|string|max:15',
@@ -107,7 +106,6 @@ class GuruController extends Controller
 
             return redirect()->route('admin.guru.index')
                 ->with('success', 'Data guru berhasil diupdate!');
-
         } catch (\Exception $e) {
             return redirect()->back()
                 ->with('error', 'Terjadi kesalahan: ' . $e->getMessage())
@@ -116,24 +114,23 @@ class GuruController extends Controller
     }
 
     // Hapus data guru
-    public function destroy($nik)
+    public function destroy($nip)
     {
         DB::beginTransaction();
 
         try {
             // Hapus akun terlebih dahulu
-            Akun::where('user_id', $nik)
+            Akun::where('user_id', $nip)
                 ->where('user_type', 'guru')
                 ->delete();
 
             // Hapus guru
-            Guru::where('nik', $nik)->delete();
+            Guru::where('nip', $nip)->delete();
 
             DB::commit();
 
             return redirect()->route('admin.guru.index')
                 ->with('success', 'Data guru berhasil dihapus!');
-
         } catch (\Exception $e) {
             DB::rollback();
 
@@ -143,26 +140,25 @@ class GuruController extends Controller
     }
 
     // Reset password guru
-    public function resetPassword($nik)
+    public function resetPassword($nip)
     {
         DB::beginTransaction();
 
         try {
-            $akun = Akun::where('user_id', $nik)
+            $akun = Akun::where('user_id', $nip)
                 ->where('user_type', 'guru')
                 ->first();
 
             if ($akun) {
                 $akun->update([
-                    'password' => Hash::make($nik) // Reset ke NIK
+                    'password' => Hash::make($nip) // Reset ke NIP
                 ]);
             }
 
             DB::commit();
 
             return redirect()->route('admin.guru.index')
-                ->with('success', 'Password berhasil direset ke NIK!');
-
+                ->with('success', 'Password berhasil direset ke NIP!');
         } catch (\Exception $e) {
             DB::rollback();
 
@@ -170,6 +166,4 @@ class GuruController extends Controller
                 ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
-
-
 }

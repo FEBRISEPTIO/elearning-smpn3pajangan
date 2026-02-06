@@ -48,7 +48,7 @@ class Komentar extends Model
      */
     public function guru()
     {
-        return $this->belongsTo(Guru::class, 'user_id', 'nik');
+        return $this->belongsTo(Guru::class, 'user_id', 'nip');
     }
 
     /**
