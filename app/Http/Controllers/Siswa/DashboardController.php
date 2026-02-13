@@ -45,28 +45,28 @@ class DashboardController extends Controller
             ->limit(6)
             ->get();
 
+        // Hitung statistik nilai dari model Nilai
+        $totalNilai = \App\Models\Nilai::where('nisn', $siswa->nisn)->count();
+        $rataNilai = \App\Models\Nilai::where('nisn', $siswa->nisn)->avg('nilai');
+
+        // Ambil 5 nilai terbaru
+        $nilaiTerbaru = \App\Models\Nilai::where('nisn', $siswa->nisn)
+            ->with(['mapel', 'tugas', 'guru'])
+            ->latest()
+            ->limit(5)
+            ->get();
+
+        // Pass ke view
         return view('siswa.dashboard', compact(
             'siswa',
             'totalMateri',
             'totalTugas',
             'materiBaru',
             'aktifitas',
-            'materiTerbaru'
-        ));
-
-        $totalNilai = PengumpulanTugas::where('nisn', $siswa->nisn)
-            ->where('status', 'graded')
-            ->count();
-
-        $rataNilai = PengumpulanTugas::where('nisn', $siswa->nisn)
-            ->where('status', 'graded')
-            ->avg('nilai');
-
-        // Pass ke view
-        return view('siswa.dashboard', compact(
-            // ... variabel yang sudah ada ...
+            'materiTerbaru',
             'totalNilai',
-            'rataNilai'
+            'rataNilai',
+            'nilaiTerbaru'
         ));
     }
 }

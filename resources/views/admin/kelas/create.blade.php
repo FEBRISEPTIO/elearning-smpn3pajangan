@@ -86,7 +86,7 @@
                         </label>
                         <input type="text" id="kelas" name="kelas" value="{{ old('kelas') }}" required
                             class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-                            placeholder="Contoh: X IPA 1, XI IPS 2">
+                            placeholder="Contoh: Kelas 7A, Kelas 8B">
                         <p class="mt-2 text-sm text-gray-500">Masukkan nama kelas lengkap dengan format yang jelas</p>
                     </div>
 

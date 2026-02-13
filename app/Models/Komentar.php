@@ -43,21 +43,7 @@ class Komentar extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    /**
-     * Relasi ke guru (jika user_type = 'guru')
-     */
-    public function guru()
-    {
-        return $this->belongsTo(Guru::class, 'user_id', 'nip');
-    }
-
-    /**
-     * Relasi ke siswa (jika user_type = 'siswa')
-     */
-    public function siswa()
-    {
-        return $this->belongsTo(Siswa::class, 'user_id');
-    }
+    // Broken relationships removed. Use $this->akun->guru or $this->akun->siswa instead.
 
     /**
      * Scope untuk komentar materi
@@ -102,21 +88,33 @@ class Komentar extends Model
     /**
      * Get user profile info
      */
+    /**
+     * Relasi ke akun
+     */
+    public function akun()
+    {
+        return $this->belongsTo(Akun::class, 'user_id');
+    }
+
+    /**
+     * Get user profile info
+     */
     public function getUserProfile()
     {
         if ($this->user_type === 'guru') {
             return [
                 'type' => 'guru',
-                'name' => $this->guru->nama ?? $this->user->name ?? 'Guru',
+                'name' => $this->akun->guru->nama ?? 'Guru',
                 'avatar' => 'fas fa-chalkboard-teacher',
                 'color' => 'bg-blue-100 text-blue-800',
                 'icon_color' => 'text-blue-600'
             ];
         } elseif ($this->user_type === 'siswa') {
+            $siswa = $this->akun->siswa ?? null;
             return [
                 'type' => 'siswa',
-                'name' => $this->siswa->nama ?? $this->user->name ?? 'Siswa',
-                'kelas' => $this->siswa->kelas->kelas ?? null,
+                'name' => $siswa->nama ?? 'Siswa',
+                'kelas' => $siswa->kelas->kelas ?? null,
                 'avatar' => 'fas fa-user-graduate',
                 'color' => 'bg-gray-100 text-gray-800',
                 'icon_color' => 'text-gray-600'

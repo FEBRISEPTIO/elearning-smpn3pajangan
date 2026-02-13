@@ -67,11 +67,18 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     <!-- Kolom 1 -->
                     <div class="space-y-4">
-                        <!-- NIK (readonly) -->
+                        <!-- NIP (readonly) -->
                         <div>
                             <label for="nip" class="block text-sm font-medium text-gray-700 mb-1">NIP</label>
                             <input type="text" id="nip" value="{{ $guru->nip }}" readonly
                                 class="w-full px-4 py-2 border border-gray-300 bg-gray-50 rounded-lg">
+                        </div>
+
+                        <!-- NUPTK -->
+                        <div>
+                            <label for="nuptk" class="block text-sm font-medium text-gray-700 mb-1">NUPTK</label>
+                            <input type="text" id="nuptk" name="nuptk" value="{{ old('nuptk', $guru->nuptk) }}"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                         </div>
 
                         <!-- Nama -->
@@ -87,16 +94,25 @@
                         <!-- Email -->
                         <div>
                             <label for="email" class="block text-sm font-medium text-gray-700 mb-1">
-                                Email <span class="text-red-500">*</span>
+                                Email
                             </label>
                             <input type="email" id="email" name="email" value="{{ old('email', $guru->email) }}"
-                                required
                                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                         </div>
                     </div>
 
                     <!-- Kolom 2 -->
                     <div class="space-y-4">
+                        <!-- Jenis PTK -->
+                        <div>
+                            <label for="jenis_ptk" class="block text-sm font-medium text-gray-700 mb-1">
+                                Jenis PTK <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" id="jenis_ptk" name="jenis_ptk" value="{{ old('jenis_ptk', $guru->jenis_ptk) }}"
+                                required
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+
                         <!-- Jenis Kelamin -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">
@@ -145,43 +161,29 @@
                             <h4 class="text-sm font-semibold text-blue-800 mb-1">Informasi Login:</h4>
                             <div class="text-sm text-blue-700 space-y-1">
                                 <p><strong class="font-medium text-blue-800">Username:</strong> {{ $guru->nip }}</p>
-                                <p><strong class="font-medium text-blue-800">Password Saat Ini:</strong> {{ $guru->nip }}</p>
+                                <p><strong class="font-medium text-blue-800">Password:</strong> {{ $guru->nip }}</p>
                             </div>
                             <p class="text-xs text-blue-600 mt-2">
-                                Guru dapat mengganti password setelah login.
                             </p>
                         </div>
                     </div>
                 </div>
 
+
+
                 <!-- Action Buttons -->
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pt-4 border-t">
-                    <!-- Reset Password Button -->
-                    <button type="button"
-                        onclick="if(confirm('Reset password ke NIP?')) document.getElementById('reset-form').submit();"
-                        class="bg-amber-600 hover:bg-amber-700 text-white px-6 py-3 rounded-lg text-sm font-medium inline-flex items-center transition w-full md:w-auto justify-center">
-                        <i class="fas fa-key mr-2"></i>Reset Password
+                <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+                    <a href="{{ route('admin.guru.index') }}"
+                        class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg text-sm font-medium text-center transition">
+                        Batal
+                    </a>
+                    <button type="submit"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg text-sm font-medium inline-flex items-center justify-center transition">
+                        <i class="fas fa-save mr-2"></i>Update Data
                     </button>
-
-                    <!-- Form reset password terpisah -->
-                    <form id="reset-form" action="{{ route('admin.guru.reset-password', $guru->nip) }}" method="POST"
-                        class="hidden">
-                        @csrf
-                    </form>
-
-                    <!-- Action Buttons -->
-                    <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-                        <a href="{{ route('admin.guru.index') }}"
-                            class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg text-sm font-medium text-center transition">
-                            Batal
-                        </a>
-                        <button type="submit"
-                            class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg text-sm font-medium inline-flex items-center justify-center transition">
-                            <i class="fas fa-save mr-2"></i>Update Data
-                        </button>
-                    </div>
                 </div>
-            </form>
+        </div>
+        </form>
         </div>
     </main>
 </body>

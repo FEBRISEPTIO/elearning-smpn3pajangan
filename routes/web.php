@@ -7,7 +7,7 @@ use App\Http\Controllers\Admin\KelasController;
 use App\Http\Controllers\Admin\MataPelajaranController;
 use App\Http\Controllers\Admin\DataSekolahController;
 use App\Http\Controllers\Guru\MateriController;
-use App\Http\Controllers\Guru\TugasController; // GUNAKAN LANGSUNG
+use App\Http\Controllers\Guru\TugasController;
 use App\Http\Controllers\Guru\NilaiController as GuruNilaiController;
 use App\Http\Controllers\Guru\DashboardController as GuruDashboardController;
 use App\Http\Controllers\Guru\KomentarController;
@@ -16,6 +16,7 @@ use App\Http\Controllers\Siswa\TugasSiswaController;
 use App\Http\Controllers\Siswa\DashboardController as SiswaDashboardController;
 use App\Http\Controllers\Siswa\NilaiSiswaController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Artisan;
 
 Route::get('/', function () {
     return view('welcome');
@@ -74,17 +75,25 @@ Route::middleware(['auth'])->group(function () {
 
         // Mata Pelajaran
         Route::resource('mapel', MataPelajaranController::class)->except(['show']);
+
+        // Storage Link
+        Route::get('/storage-link', function () {
+            Artisan::call('storage:link');
+            return redirect()->back()->with('success', 'Storage link created successfully');
+        })->name('storage.link');
     });
 
     // Guru management routes
     Route::prefix('guru')->name('guru.')->middleware('role:guru')->group(function () {
         // Materi
         Route::resource('materi', MateriController::class);
+        Route::get('/materi/{materi}/download', [MateriController::class, 'download'])->name('materi.download');
         Route::post('/materi/{materi}/komentar', [MateriController::class, 'storeKomentar'])->name('materi.komentar.store');
         Route::delete('/komentar/{komentar}', [MateriController::class, 'destroyKomentar'])->name('materi.komentar.destroy');
 
-        // Tugas - GUNAKAN TugasController langsung
+        // Tugas
         Route::resource('tugas', TugasController::class);
+        Route::get('/tugas/{tugas}/download-file', [TugasController::class, 'downloadFile'])->name('tugas.download-file');
         Route::post('/tugas/{id}/komentar', [TugasController::class, 'storeKomentar'])->name('tugas.komentar.store');
         Route::delete('/tugas/komentar/{komentar}', [TugasController::class, 'destroyKomentar'])->name('tugas.komentar.destroy');
         Route::get('/tugas/{id}/pengumpulan', [TugasController::class, 'pengumpulan'])->name('tugas.pengumpulan');
@@ -92,11 +101,8 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/pengumpulan/{pengumpulan}', [TugasController::class, 'hapusPengumpulan'])->name('tugas.hapus-pengumpulan');
         Route::get('/pengumpulan/{pengumpulan}/download', [TugasController::class, 'downloadPengumpulan'])->name('guru.tugas.download-pengumpulan');
         // Nilai
-        Route::get('/nilai', [GuruNilaiController::class, 'index'])->name('nilai.index');
-        Route::get('/nilai/{siswa}', [GuruNilaiController::class, 'show'])->name('nilai.show');
-        Route::post('/nilai/{siswa}', [GuruNilaiController::class, 'store'])->name('nilai.store');
-        Route::put('/nilai/{nilai}', [GuruNilaiController::class, 'update'])->name('nilai.update');
-        Route::delete('/nilai/{nilai}', [GuruNilaiController::class, 'destroy'])->name('nilai.destroy');
+        Route::get('/nilai/get-siswa/{kelasId}', [GuruNilaiController::class, 'getSiswaByKelas'])->name('nilai.get-siswa');
+        Route::resource('nilai', GuruNilaiController::class);
 
         // Komentar
         Route::get('/komentar', [KomentarController::class, 'index'])->name('komentar.index');
@@ -116,6 +122,7 @@ Route::middleware(['auth'])->group(function () {
         // Tugas
         Route::get('/tugas', [TugasSiswaController::class, 'index'])->name('tugas.index');
         Route::get('/tugas/{tugas}', [TugasSiswaController::class, 'show'])->name('tugas.show');
+        Route::get('/tugas/{tugas}/download-file', [TugasSiswaController::class, 'downloadFile'])->name('tugas.download-file');
         Route::post('/tugas/{tugas}/komentar', [TugasSiswaController::class, 'storeKomentar'])->name('tugas.komentar.store');
         Route::delete('/komentar/{komentar}', [TugasSiswaController::class, 'destroyKomentar'])->name('tugas.komentar.destroy');
         Route::post('/tugas/{tugas}/submit', [TugasSiswaController::class, 'submitTugas'])->name('tugas.submit');

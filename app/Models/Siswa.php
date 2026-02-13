@@ -46,17 +46,24 @@ class Siswa extends Model
     // Relasi lainnya (sesuaikan jika perlu)
     public function nilais()
     {
-        return $this->hasMany(Nilai::class, 'siswa_nisn', 'nisn');
+        return $this->hasMany(Nilai::class, 'nisn', 'nisn');
     }
 
     public function pengumpulanTugas()
     {
-        return $this->hasMany(PengumpulanTugas::class, 'siswa_nisn', 'nisn');
+        return $this->hasMany(PengumpulanTugas::class, 'nisn', 'nisn');
     }
 
     public function komentars()
     {
-        return $this->hasMany(Komentar::class, 'siswa_nisn', 'nisn');
+        return $this->hasManyThrough(
+            Komentar::class,
+            Akun::class,
+            'user_id', // FK on Akun table (stores nisn)
+            'user_id', // FK on Komentar table (stores akun id)
+            'nisn',    // Local key on Siswa table
+            'id'       // Local key on Akun table
+        );
     }
 
     public function tugas()

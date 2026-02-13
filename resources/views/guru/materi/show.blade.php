@@ -120,12 +120,10 @@
                             class="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium transition">
                             <i class="fas fa-edit mr-2"></i> Edit
                         </a>
-                        @if ($materi->file)
-                        <a href="{{ Storage::url($materi->file) }}" target="_blank"
+                        <a href="{{ route('guru.materi.download', $materi) }}"
                             class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition">
                             <i class="fas fa-download mr-2"></i> Download
                         </a>
-                        @endif
                     </div>
                 </div>
 

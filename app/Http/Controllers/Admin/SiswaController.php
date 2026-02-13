@@ -67,13 +67,17 @@ class SiswaController extends Controller
         // Validasi data
         $request->validate([
             'nisn' => 'required|string|size:10|unique:siswa,nisn',
-            'nis' => 'required|string|size:8',
+            'nis' => 'required|string|size:4',
             'nama' => 'required|string|max:100',
             'email' => 'nullable|email|max:100|unique:siswa,email',
             'jnsklmn' => 'required|in:L,P',
             'kelas_id' => 'required|exists:kelas,id',
             'alamat' => 'nullable|string',
             'no_telp' => 'nullable|string|max:15',
+            'tempat_lahir' => 'nullable|string|max:100',
+            'tanggal_lahir' => 'nullable|date',
+            'agama' => 'nullable|string|max:50',
+            'tingkat' => 'nullable|string|max:10',
         ]);
 
         DB::beginTransaction();
@@ -89,6 +93,10 @@ class SiswaController extends Controller
                 'kelas_id' => $request->kelas_id,
                 'alamat' => $request->alamat,
                 'no_telp' => $request->no_telp,
+                'tempat_lahir' => $request->tempat_lahir,
+                'tanggal_lahir' => $request->tanggal_lahir,
+                'agama' => $request->agama,
+                'tingkat' => $request->tingkat,
                 'foto' => null,
             ]);
 
@@ -129,13 +137,17 @@ class SiswaController extends Controller
         $siswa = Siswa::where('nisn', $nisn)->firstOrFail();
 
         $request->validate([
-            'nis' => 'required|string|size:8',
+            'nis' => 'required|string|size:4',
             'nama' => 'required|string|max:100',
             'email' => 'nullable|email|max:100|unique:siswa,email,' . $siswa->nisn . ',nisn',
             'jnsklmn' => 'required|in:L,P',
             'kelas_id' => 'required|exists:kelas,id',
             'alamat' => 'nullable|string',
             'no_telp' => 'nullable|string|max:15',
+            'tempat_lahir' => 'nullable|string|max:100',
+            'tanggal_lahir' => 'nullable|date',
+            'agama' => 'nullable|string|max:50',
+            'tingkat' => 'nullable|string|max:10',
         ]);
 
         DB::beginTransaction();
@@ -150,9 +162,14 @@ class SiswaController extends Controller
                 'kelas_id' => $request->kelas_id,
                 'alamat' => $request->alamat,
                 'no_telp' => $request->no_telp,
+                'tempat_lahir' => $request->tempat_lahir,
+                'tanggal_lahir' => $request->tanggal_lahir,
+                'agama' => $request->agama,
+                'tingkat' => $request->tingkat,
             ]);
 
-            // Update password di akun jika NIS berubah
+            // Password tidak lagi diupdate otomatis saat NIS berubah
+            /*
             if ($siswa->nis !== $request->nis) {
                 $akun = Akun::where('user_id', $siswa->nisn)
                     ->where('user_type', 'siswa')
@@ -164,6 +181,7 @@ class SiswaController extends Controller
                     ]);
                 }
             }
+            */
 
             DB::commit();
 

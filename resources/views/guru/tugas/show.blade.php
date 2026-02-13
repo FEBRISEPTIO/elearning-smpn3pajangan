@@ -51,16 +51,16 @@
 
         <!-- Flash Messages -->
         @if (session('success'))
-            <div class="bg-green-50 border-l-4 border-green-500 p-4 mb-6">
-                <div class="flex">
-                    <div class="shrink-0">
-                        <i class="fas fa-check-circle text-green-500"></i>
-                    </div>
-                    <div class="ml-3">
-                        <p class="text-sm text-green-700">{{ session('success') }}</p>
-                    </div>
+        <div class="bg-green-50 border-l-4 border-green-500 p-4 mb-6">
+            <div class="flex">
+                <div class="shrink-0">
+                    <i class="fas fa-check-circle text-green-500"></i>
+                </div>
+                <div class="ml-3">
+                    <p class="text-sm text-green-700">{{ session('success') }}</p>
                 </div>
             </div>
+        </div>
         @endif
 
         <!-- Main Content -->
@@ -108,22 +108,22 @@
                     </span>
 
                     @php
-                        $isDeadlinePassed = now()->greaterThan($tugas->deadline);
-                        $timeRemaining = now()->diff($tugas->deadline);
+                    $isDeadlinePassed = now()->greaterThan($tugas->deadline);
+                    $timeRemaining = now()->diff($tugas->deadline);
                     @endphp
 
                     @if ($isDeadlinePassed)
-                        <span
-                            class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800">
-                            <i class="fas fa-clock mr-1"></i> Deadline:
-                            {{ $tugas->deadline->format('d M Y, H:i') }}
-                        </span>
+                    <span
+                        class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800">
+                        <i class="fas fa-clock mr-1"></i> Deadline:
+                        {{ $tugas->deadline->format('d M Y, H:i') }}
+                    </span>
                     @else
-                        <span
-                            class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
-                            <i class="fas fa-clock mr-1"></i> Sisa: {{ $timeRemaining->d }} hari
-                            {{ $timeRemaining->h }} jam
-                        </span>
+                    <span
+                        class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                        <i class="fas fa-clock mr-1"></i> Sisa: {{ $timeRemaining->d }} hari
+                        {{ $timeRemaining->h }} jam
+                    </span>
                     @endif
 
                     <span
@@ -137,12 +137,12 @@
             <div class="p-6">
                 <!-- Description -->
                 @if ($tugas->deskripsi)
-                    <div class="mb-8">
-                        <h3 class="text-lg font-semibold text-gray-900 mb-3">Deskripsi Tugas</h3>
-                        <div class="prose max-w-none text-gray-700 bg-gray-50 border border-gray-200 rounded-xl p-6">
-                            {!! nl2br(e($tugas->deskripsi)) !!}
-                        </div>
+                <div class="mb-8">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-3">Deskripsi Tugas</h3>
+                    <div class="prose max-w-none text-gray-700 bg-gray-50 border border-gray-200 rounded-xl p-6">
+                        {!! nl2br(e($tugas->deskripsi)) !!}
                     </div>
+                </div>
                 @endif
 
                 <!-- Tugas Content -->
@@ -150,6 +150,36 @@
                     <h3 class="text-lg font-semibold text-gray-900 mb-3">Instruksi Tugas</h3>
                     <div class="prose max-w-none text-gray-700 bg-gray-50 border border-gray-200 rounded-xl p-6">
                         {!! nl2br(e($tugas->tugas)) !!}
+
+                        @if ($tugas->file)
+                        <div class="mt-6 pt-6 border-t border-gray-200">
+                            <h4 class="text-sm font-semibold text-gray-900 mb-3">
+                                <i class="fas fa-paperclip mr-2"></i> Lampiran File
+                            </h4>
+                            <div class="flex items-center justify-between bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
+                                <div class="flex items-center">
+                                    @php
+                                    $extension = pathinfo($tugas->file, PATHINFO_EXTENSION);
+                                    $iconClass = [
+                                    'pdf' => 'fas fa-file-pdf text-red-500',
+                                    'doc' => 'fas fa-file-word text-blue-500',
+                                    'docx' => 'fas fa-file-word text-blue-500',
+                                    'ppt' => 'fas fa-file-powerpoint text-orange-500',
+                                    'pptx' => 'fas fa-file-powerpoint text-orange-500',
+                                    'jpg' => 'fas fa-file-image text-green-500',
+                                    'jpeg' => 'fas fa-file-image text-green-500',
+                                    'png' => 'fas fa-file-image text-green-500',
+                                    ][strtolower($extension)] ?? 'fas fa-file text-gray-500';
+                                    @endphp
+                                    <div class="{{ $iconClass }} text-2xl mr-3"></div>
+                                    <div>
+                                        <p class="font-medium text-gray-900">{{ basename($tugas->file) }}</p>
+                                        <p class="text-xs text-gray-500">{{ strtoupper($extension) }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @endif
                     </div>
                 </div>
 
@@ -180,9 +210,9 @@
                                     <p class="font-medium {{ $isDeadlinePassed ? 'text-red-600' : 'text-green-600' }}">
                                         {{ $tugas->deadline->format('H:i') }}
                                         @if ($isDeadlinePassed)
-                                            (Sudah lewat)
+                                        (Sudah lewat)
                                         @else
-                                            ({{ $timeRemaining->d }} hari {{ $timeRemaining->h }} jam lagi)
+                                        ({{ $timeRemaining->d }} hari {{ $timeRemaining->h }} jam lagi)
                                         @endif
                                     </p>
                                 </div>
@@ -221,77 +251,79 @@
 
                     <!-- Daftar Komentar -->
                     @if ($tugas->komentar_count > 0)
-                        <div class="space-y-6">
-                            @foreach ($komentars as $komentar)
-                                @php
-                                    $profile = $komentar->getUserProfile();
-                                @endphp
-                                <div
-                                    class="border border-gray-200 rounded-xl p-4 {{ $profile['type'] === 'guru' ? 'bg-blue-50' : 'bg-gray-50' }}">
-                                    <div class="flex items-start">
-                                        <div class="shrink-0 mr-4">
-                                            <div
-                                                class="w-10 h-10 {{ $profile['type'] === 'guru' ? 'bg-blue-100' : 'bg-gray-100' }} rounded-full flex items-center justify-center">
-                                                <i
-                                                    class="{{ $profile['avatar'] }} {{ $profile['type'] === 'guru' ? 'text-blue-600' : 'text-gray-600' }}"></i>
-                                            </div>
-                                        </div>
-                                        <div class="flex-1">
-                                            <div class="flex items-center justify-between mb-2">
-                                                <div>
-                                                    <div class="flex items-center">
-                                                        <h4 class="font-semibold text-gray-900 mr-2">
-                                                            {{ $profile['name'] }}</h4>
-                                                        @if ($profile['type'] === 'guru')
-                                                            <span
-                                                                class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
-                                                                <i class="fas fa-chalkboard-teacher mr-1"></i> Guru
-                                                            </span>
-                                                        @elseif($profile['type'] === 'siswa')
-                                                            <span
-                                                                class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800">
-                                                                <i class="fas fa-user-graduate mr-1"></i> Siswa
-                                                            </span>
-                                                        @endif
-                                                    </div>
-                                                    <p class="text-sm text-gray-500">
-                                                        {{ $komentar->created_at->diffForHumans() }}</p>
-                                                </div>
-                                                @if (Auth::id() == $komentar->user_id || $profile['type'] === 'guru')
-                                                    <form
-                                                        action="{{ route('guru.tugas.komentar.destroy', $komentar->id) }}"
-                                                        method="POST"
-                                                        onsubmit="return confirm('Apakah Anda yakin ingin menghapus komentar ini?')">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit"
-                                                            class="text-red-500 hover:text-red-700 p-1 hover:bg-red-50 rounded">
-                                                            <i class="fas fa-trash"></i>
-                                                        </button>
-                                                    </form>
-                                                @endif
-                                            </div>
-                                            <p class="text-gray-700">{{ $komentar->isi_komentar }}</p>
-                                        </div>
+                    <div class="space-y-6">
+                        @foreach ($komentars as $komentar)
+                        @php
+                        $profile = $komentar->getUserProfile();
+                        @endphp
+                        <div
+                            class="border border-gray-200 rounded-xl p-4 {{ $profile['type'] === 'guru' ? 'bg-blue-50' : 'bg-gray-50' }}">
+                            <div class="flex items-start">
+                                <div class="shrink-0 mr-4">
+                                    <div
+                                        class="w-10 h-10 {{ $profile['type'] === 'guru' ? 'bg-blue-100' : 'bg-gray-100' }} rounded-full flex items-center justify-center">
+                                        <i
+                                            class="{{ $profile['avatar'] }} {{ $profile['type'] === 'guru' ? 'text-blue-600' : 'text-gray-600' }}"></i>
                                     </div>
                                 </div>
-                            @endforeach
+                                <div class="flex-1">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <div>
+                                            <div class="flex items-center">
+                                                <h4 class="font-semibold text-gray-900 mr-2">
+                                                    {{ $profile['name'] }}
+                                                </h4>
+                                                @if ($profile['type'] === 'guru')
+                                                <span
+                                                    class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
+                                                    <i class="fas fa-chalkboard-teacher mr-1"></i> Guru
+                                                </span>
+                                                @elseif($profile['type'] === 'siswa')
+                                                <span
+                                                    class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800">
+                                                    <i class="fas fa-user-graduate mr-1"></i> Siswa
+                                                </span>
+                                                @endif
+                                            </div>
+                                            <p class="text-sm text-gray-500">
+                                                {{ $komentar->created_at->diffForHumans() }}
+                                            </p>
+                                        </div>
+                                        @if (Auth::id() == $komentar->user_id || $profile['type'] === 'guru')
+                                        <form
+                                            action="{{ route('guru.tugas.komentar.destroy', $komentar->id) }}"
+                                            method="POST"
+                                            onsubmit="return confirm('Apakah Anda yakin ingin menghapus komentar ini?')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit"
+                                                class="text-red-500 hover:text-red-700 p-1 hover:bg-red-50 rounded">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                        @endif
+                                    </div>
+                                    <p class="text-gray-700">{{ $komentar->isi_komentar }}</p>
+                                </div>
+                            </div>
                         </div>
+                        @endforeach
+                    </div>
 
-                        <!-- Pagination Komentar -->
-                        @if ($komentars->hasPages())
-                            <div class="mt-6">
-                                {{ $komentars->links() }}
-                            </div>
-                        @endif
+                    <!-- Pagination Komentar -->
+                    @if ($komentars->hasPages())
+                    <div class="mt-6">
+                        {{ $komentars->links() }}
+                    </div>
+                    @endif
                     @else
-                        <div class="text-center py-8 border border-gray-200 rounded-xl">
-                            <div
-                                class="mx-auto w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                                <i class="fas fa-comment-slash text-gray-400 text-2xl"></i>
-                            </div>
-                            <p class="text-gray-500">Belum ada komentar. Mulailah diskusi tentang tugas ini!</p>
+                    <div class="text-center py-8 border border-gray-200 rounded-xl">
+                        <div
+                            class="mx-auto w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                            <i class="fas fa-comment-slash text-gray-400 text-2xl"></i>
                         </div>
+                        <p class="text-gray-500">Belum ada komentar. Mulailah diskusi tentang tugas ini!</p>
+                    </div>
                     @endif
                 </div>
             </div>

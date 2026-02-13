@@ -211,19 +211,6 @@ class TugasSiswaController extends Controller
             // Tentukan status
             $status = now()->greaterThan($tugas->deadline) ? 'late' : 'submitted';
 
-            // **DEBUG: Tampilkan data sebelum save**
-            // dd([
-            //     'Siswa NISN' => $siswa->nisn,
-            //     'Siswa Data' => $siswa->toArray(),
-            //     'Data untuk insert' => [
-            //         'tugas_id' => $tugas->id,
-            //         'siswa_id' => $siswa->nisn,
-            //         'file' => $filePath,
-            //         'keterangan' => $request->keterangan,
-            //         'status' => $status
-            //     ]
-            // ]);
-
             // Simpan pengumpulan - GUNAKAN NISN
             $pengumpulan = PengumpulanTugas::updateOrCreate(
                 [
@@ -240,7 +227,6 @@ class TugasSiswaController extends Controller
 
             return redirect()->back()
                 ->with('success', 'Tugas berhasil dikumpulkan.');
-
         } catch (\Exception $e) {
             return redirect()->back()
                 ->with('error', 'Terjadi kesalahan saat mengumpulkan tugas: ' . $e->getMessage());
@@ -265,5 +251,28 @@ class TugasSiswaController extends Controller
         }
 
         return Storage::disk('public')->download($pengumpulan->file);
+    }
+
+    /**
+     * Download file lampiran tugas dari guru
+     */
+    public function downloadFile(Tugas $tugas)
+    {
+        $siswa = $this->getSiswa();
+
+        if (!$siswa) {
+            return redirect()->back()->with('error', 'Data siswa tidak ditemukan.');
+        }
+
+        // Pastikan tugas ini untuk kelas siswa
+        if ($tugas->kelas_id != $siswa->kelas_id) {
+            abort(403, 'Anda tidak memiliki akses ke tugas ini');
+        }
+
+        if (!$tugas->file || !Storage::disk('public')->exists($tugas->file)) {
+            return redirect()->back()->with('error', 'File tidak ditemukan.');
+        }
+
+        return Storage::disk('public')->download($tugas->file);
     }
 }

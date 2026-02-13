@@ -129,5 +129,21 @@ class MateriSiswaController extends Controller
             ->with('success', 'Komentar berhasil dihapus');
     }
 
-    // ... method lainnya tetap sama ...
+    /**
+     * Download file materi
+     */
+    public function download(Materi $materi)
+    {
+        // Pastikan siswa memiliki akses ke materi ini
+        $siswaKelasId = Auth::user()->siswa->kelas_id ?? null;
+        if ($materi->kelas_id != $siswaKelasId) {
+            abort(403, 'Anda tidak memiliki akses ke materi ini.');
+        }
+
+        if (!$materi->file || !Storage::disk('public')->exists($materi->file)) {
+            return redirect()->back()->with('error', 'File tidak ditemukan.');
+        }
+
+        return Storage::disk('public')->download($materi->file);
+    }
 }

@@ -17,9 +17,11 @@ class Guru extends Model
     protected $fillable = [
         'user_id',
         'nip',
+        'nuptk',
         'nama',
         'email',
         'jnsklmn',
+        'jenis_ptk',
         'no_telp',
         'foto'
     ];
@@ -47,6 +49,6 @@ class Guru extends Model
 
     public function nilais()
     {
-        return $this->hasMany(Nilai::class, 'guru_id');
+        return $this->hasMany(Nilai::class, 'guru_nip', 'nip');
     }
 }

@@ -132,7 +132,7 @@
             </div>
         </div>
 
-        <!-- Kolom Kanan: Form Login (TETAP SAMA) -->
+        <!-- Kolom Kanan: Form Login -->
         <div class="flex-1 flex items-center justify-center p-8">
             <div class="w-full max-w-md">
                 <!-- Logo Mobile -->
@@ -248,8 +248,8 @@
                                 <i class="fas fa-chalkboard-teacher text-purple-500 mt-1 mr-2"></i>
                                 <div>
                                     <span class="font-medium">Guru:</span> Username = <span
-                                        class="font-mono">NIK</span>,
-                                    Password = <span class="font-mono">NIK</span>
+                                        class="font-mono">NIP</span>,
+                                    Password = <span class="font-mono">NIP</span>
                                 </div>
                             </div>
                         </div>

@@ -20,8 +20,8 @@ class Tugas extends Model
         'deadline',
         'mapel_id',
         'kelas_id',
-        'guru_nip'
-        // Note: field 'file' tidak ada di database Anda, jadi kita skip
+        'guru_nip',
+        'file'
     ];
 
     protected $casts = [

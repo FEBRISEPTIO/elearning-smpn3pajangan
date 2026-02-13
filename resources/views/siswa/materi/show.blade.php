@@ -93,8 +93,6 @@
                             ][strtolower($extension)] ?? 'fas fa-file text-gray-500';
                             @endphp
                             <div class="{{ $iconClass }} text-2xl mr-3"></div>
-                            @elseif(str_contains($materi->materi, '[Video]'))
-                            <div class="fas fa-video text-purple-500 text-2xl mr-3"></div>
                             @else
                             <div class="fas fa-file-alt text-gray-500 text-2xl mr-3"></div>
                             @endif

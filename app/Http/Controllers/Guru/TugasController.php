@@ -11,6 +11,7 @@ use App\Models\MataPelajaran;
 use App\Models\PengumpulanTugas;
 use App\Models\Siswa;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class TugasController extends Controller
 {
@@ -104,7 +105,13 @@ class TugasController extends Controller
             'mata_pelajaran_id' => 'required|exists:mata_pelajaran,id',
             'deadline' => 'required|date|after:now',
             'konten_tugas' => 'nullable|string',
+            'file_tugas' => 'nullable|file|mimes:pdf,doc,docx,ppt,pptx,jpg,jpeg,png|max:5120', // Max 5MB
         ]);
+
+        $filePath = null;
+        if ($request->hasFile('file_tugas')) {
+            $filePath = $request->file('file_tugas')->store('tugas', 'public');
+        }
 
         // Simpan ke database
         Tugas::create([
@@ -115,6 +122,7 @@ class TugasController extends Controller
             'mapel_id' => $request->mata_pelajaran_id,
             'kelas_id' => $request->kelas_id,
             'guru_nip' => $user->guru->nip,
+            'file' => $filePath,
         ]);
 
         return redirect()->route('guru.tugas.index')
@@ -204,17 +212,28 @@ class TugasController extends Controller
             'mata_pelajaran_id' => 'required|exists:mata_pelajaran,id',
             'deadline' => 'required|date',
             'konten_tugas' => 'nullable|string',
+            'file_tugas' => 'nullable|file|mimes:pdf,doc,docx,ppt,pptx,jpg,jpeg,png|max:5120',
         ]);
 
-        // Update tugas
-        $tugas->update([
+        $data = [
             'judul_tugas' => $request->judul,
             'deskripsi' => $request->deskripsi,
             'tugas' => $request->konten_tugas ?? 'Tidak ada konten tambahan',
             'deadline' => $request->deadline,
             'mapel_id' => $request->mata_pelajaran_id,
             'kelas_id' => $request->kelas_id,
-        ]);
+        ];
+
+        if ($request->hasFile('file_tugas')) {
+            // Hapus file lama jika ada
+            if ($tugas->file && Storage::disk('public')->exists($tugas->file)) {
+                Storage::disk('public')->delete($tugas->file);
+            }
+            $data['file'] = $request->file('file_tugas')->store('tugas', 'public');
+        }
+
+        // Update tugas
+        $tugas->update($data);
 
         return redirect()->route('guru.tugas.show', $tugas->id)
             ->with('success', 'Tugas berhasil diperbarui');
@@ -339,6 +358,21 @@ class TugasController extends Controller
             'status' => 'graded', // Sesuai ENUM('submitted', 'late', 'graded')
         ]);
 
+        // Sinkronisasi dengan model Nilai
+        \App\Models\Nilai::updateOrCreate(
+            [
+                'nisn' => $pengumpulan->nisn,
+                'guru_nip' => $tugas->guru_nip,
+                'mapel_id' => $tugas->mapel_id,
+                'tugas_id' => $tugas->id,
+            ],
+            [
+                'nilai' => $request->nilai,
+                'keterangan' => $request->feedback,
+                'tgl_penilaian' => now(),
+            ]
+        );
+
         return redirect()->route('guru.tugas.pengumpulan', $id)
             ->with('success', 'Nilai berhasil diberikan.');
     }
@@ -443,10 +477,8 @@ class TugasController extends Controller
     {
         $pengumpulan = PengumpulanTugas::findOrFail($id);
 
-        // Verifikasi apakah tugas ini milik guru yang sedang login (optional, tapi disarankan)
         $tugas = $pengumpulan->tugas;
         if ($tugas->guru_id != Auth::id()) {
-            // Jika ingin strict, uncomment baris bawah
             // abort(403, 'Unauthorized access');
         }
 
@@ -455,5 +487,21 @@ class TugasController extends Controller
         }
 
         return Storage::disk('public')->download($pengumpulan->file);
+    }
+
+    /**
+     * Download file lampiran tugas
+     */
+    public function downloadFile(Tugas $tugas)
+    {
+        if ($tugas->guru_id != Auth::id()) {
+            abort(403, 'Anda tidak memiliki akses ke tugas ini');
+        }
+
+        if (!$tugas->file || !Storage::disk('public')->exists($tugas->file)) {
+            return redirect()->back()->with('error', 'File tidak ditemukan.');
+        }
+
+        return Storage::disk('public')->download($tugas->file);
     }
 }

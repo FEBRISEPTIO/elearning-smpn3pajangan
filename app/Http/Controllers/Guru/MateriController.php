@@ -271,4 +271,20 @@ class MateriController extends Controller
         return redirect()->back()
             ->with('success', 'Komentar berhasil dihapus');
     }
+    /**
+     * Download file materi
+     */
+    public function download(Materi $materi)
+    {
+        // Pastikan hanya guru yang membuat materi yang bisa download
+        if (Auth::user()->guru->nip != $materi->guru_nip) {
+            abort(403, 'Anda tidak memiliki akses ke materi ini');
+        }
+
+        if (!$materi->file || !Storage::disk('public')->exists($materi->file)) {
+            return redirect()->back()->with('error', 'File tidak ditemukan.');
+        }
+
+        return Storage::disk('public')->download($materi->file);
+    }
 }

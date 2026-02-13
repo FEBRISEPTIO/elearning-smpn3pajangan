@@ -71,7 +71,7 @@
                         {{ $tugas->deadline->format('d M Y, H:i') }}
                     </p>
                     @if (now()->greaterThan($tugas->deadline))
-                        <span class="text-xs text-red-500">(Sudah lewat)</span>
+                    <span class="text-xs text-red-500">(Sudah lewat)</span>
                     @endif
                 </div>
             </div>
@@ -101,9 +101,9 @@
                         <p class="text-2xl font-bold text-gray-900">{{ $sudahKumpul }}</p>
                         <p class="text-xs text-gray-500">
                             @if ($totalSiswa > 0)
-                                {{ number_format(($sudahKumpul / $totalSiswa) * 100, 0) }}%
+                            {{ number_format(($sudahKumpul / $totalSiswa) * 100, 0) }}%
                             @else
-                                0%
+                            0%
                             @endif
                         </p>
                     </div>
@@ -143,210 +143,207 @@
             </div>
 
             @if ($pengumpulan->count() > 0)
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th scope="col"
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Siswa
-                                </th>
-                                <th scope="col"
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Waktu Pengumpulan
-                                </th>
-                                <th scope="col"
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Status
-                                </th>
-                                <th scope="col"
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    File
-                                </th>
-                                <th scope="col"
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Keterangan
-                                </th>
-                                <th scope="col"
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Aksi
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
-                            @foreach ($pengumpulan as $item)
-                                <tr class="hover:bg-gray-50">
-                                    <td class="px-6 py-4">
-                                        <div class="flex items-center">
-                                            <div
-                                                class="shrink-0 h-10 w-10 bg-gray-100 rounded-full flex items-center justify-center mr-3">
-                                                <i class="fas fa-user-graduate text-gray-600"></i>
-                                            </div>
-                                            <div>
-                                                <div class="font-medium text-gray-900">
-                                                    {{ $item->siswa->nama ?? 'Siswa' }}</div>
-                                                <div class="text-sm text-gray-500">
-                                                    NISN: {{ $item->siswa->nisn ?? '-' }} |
-                                                    NIS: {{ $item->siswa->nis ?? '-' }}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">
-                                            {{ $item->submitted_at->format('d M Y, H:i') }}
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col"
+                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Siswa
+                            </th>
+                            <th scope="col"
+                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Waktu Pengumpulan
+                            </th>
+                            <th scope="col"
+                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Status
+                            </th>
+                            <th scope="col"
+                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                File
+                            </th>
+                            <th scope="col"
+                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Keterangan
+                            </th>
+                            <th scope="col"
+                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Aksi
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        @foreach ($pengumpulan as $item)
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4">
+                                <div class="flex items-center">
+                                    <div
+                                        class="shrink-0 h-10 w-10 bg-gray-100 rounded-full flex items-center justify-center mr-3">
+                                        <i class="fas fa-user-graduate text-gray-600"></i>
+                                    </div>
+                                    <div>
+                                        <div class="font-medium text-gray-900">
+                                            {{ $item->siswa->nama ?? 'Siswa' }}
                                         </div>
                                         <div class="text-sm text-gray-500">
-                                            {{ $item->submitted_at->diffForHumans() }}
+                                            NISN: {{ $item->siswa->nisn ?? '-' }} |
+                                            NIS: {{ $item->siswa->nis ?? '-' }}
                                         </div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        @if ($item->status == 'late')
-                                            <span
-                                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                                                <i class="fas fa-clock mr-1"></i> Terlambat
-                                            </span>
-                                        @elseif($item->status == 'graded')
-                                            <span
-                                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                                <i class="fas fa-check-circle mr-1"></i> Sudah Dinilai
-                                            </span>
-                                            @if ($item->nilai)
-                                                <div class="text-sm font-medium text-gray-900 mt-1">
-                                                    Nilai: {{ $item->nilai }}
-                                                </div>
-                                            @endif
-                                        @elseif($item->status == 'submitted')
-                                            <span
-                                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                                <i class="fas fa-paper-plane mr-1"></i> Terkirim
-                                            </span>
-                                        @else
-                                            <span
-                                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                                                <i class="fas fa-question-circle mr-1"></i> {{ $item->status }}
-                                            </span>
-                                        @endif
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        @if ($item->file)
-                                            @php
-                                                $extension = pathinfo($item->file, PATHINFO_EXTENSION);
-                                                $iconClass =
-                                                    [
-                                                        'pdf' => 'fas fa-file-pdf text-red-500',
-                                                        'doc' => 'fas fa-file-word text-blue-500',
-                                                        'docx' => 'fas fa-file-word text-blue-500',
-                                                        'ppt' => 'fas fa-file-powerpoint text-orange-500',
-                                                        'pptx' => 'fas fa-file-powerpoint text-orange-500',
-                                                        'jpg' => 'fas fa-file-image text-green-500',
-                                                        'jpeg' => 'fas fa-file-image text-green-500',
-                                                        'png' => 'fas fa-file-image text-green-500',
-                                                        'zip' => 'fas fa-file-archive text-purple-500',
-                                                        'rar' => 'fas fa-file-archive text-purple-500',
-                                                    ][strtolower($extension)] ?? 'fas fa-file text-gray-500';
-                                            @endphp
-                                            <div class="flex items-center">
-                                                <div class="{{ $iconClass }} text-lg mr-2"></div>
-                                                <div>
-                                                    <div class="text-sm text-gray-900">
-                                                        {{ basename($item->file) }}
-                                                    </div>
-                                                    <div class="text-xs text-gray-500">
-                                                        {{ strtoupper($extension) }}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        @else
-                                            <span class="text-gray-400">-</span>
-                                        @endif
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <div class="text-sm text-gray-900 max-w-xs">
-                                            {{ $item->keterangan ?? 'Tidak ada keterangan' }}
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900">
+                                    {{ optional($item->submitted_at)->format('d M Y, H:i') ?? '-' }}
+                                </div>
+                                <div class="text-sm text-gray-500">
+                                    {{ optional($item->submitted_at)->diffForHumans() ?? '' }}
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                @if ($item->status == 'late')
+                                <span
+                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                    <i class="fas fa-clock mr-1"></i> Terlambat
+                                </span>
+                                @elseif($item->status == 'graded')
+                                <span
+                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                    <i class="fas fa-check-circle mr-1"></i> Sudah Dinilai
+                                </span>
+                                @if ($item->nilai)
+                                <div class="text-sm font-medium text-gray-900 mt-1">
+                                    Nilai: {{ $item->nilai }}
+                                </div>
+                                @endif
+                                @elseif($item->status == 'submitted')
+                                <span
+                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                    <i class="fas fa-paper-plane mr-1"></i> Terkirim
+                                </span>
+                                @else
+                                <span
+                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                    <i class="fas fa-question-circle mr-1"></i> {{ $item->status }}
+                                </span>
+                                @endif
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                @if ($item->file)
+                                @php
+                                $extension = pathinfo($item->file, PATHINFO_EXTENSION);
+                                $iconClass =
+                                [
+                                'pdf' => 'fas fa-file-pdf text-red-500',
+                                'doc' => 'fas fa-file-word text-blue-500',
+                                'docx' => 'fas fa-file-word text-blue-500',
+                                'ppt' => 'fas fa-file-powerpoint text-orange-500',
+                                'pptx' => 'fas fa-file-powerpoint text-orange-500',
+                                'jpg' => 'fas fa-file-image text-green-500',
+                                'jpeg' => 'fas fa-file-image text-green-500',
+                                'png' => 'fas fa-file-image text-green-500',
+                                'zip' => 'fas fa-file-archive text-purple-500',
+                                'rar' => 'fas fa-file-archive text-purple-500',
+                                ][strtolower($extension)] ?? 'fas fa-file text-gray-500';
+                                @endphp
+                                <div class="flex items-center">
+                                    <div class="{{ $iconClass }} text-lg mr-2"></div>
+                                    <div>
+                                        <div class="text-sm text-gray-900">
+                                            {{ basename($item->file) }}
                                         </div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                        <div class="flex items-center space-x-2">
-                                            @if ($item->file)
-                                                <a href="{{ Storage::url($item->file) }}" download
-                                                    class="text-blue-600 hover:text-blue-900 p-2 hover:bg-blue-50 rounded"
-                                                    title="Download File">
-                                                    <i class="fas fa-download"></i>
-                                                </a>
-                                            @endif
+                                        <div class="text-xs text-gray-500">
+                                            {{ strtoupper($extension) }}
+                                        </div>
+                                    </div>
+                                </div>
+                                @else
+                                <span class="text-gray-400">-</span>
+                                @endif
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="text-sm text-gray-900 max-w-xs">
+                                    {{ $item->keterangan ?? 'Tidak ada keterangan' }}
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <div class="flex items-center space-x-2">
+                                    @if ($item->file)
+                                    <!-- Download button removed -->
+                                    @endif
 
-                                            <button
-                                                onclick="openNilaiModal({{ $item->id }}, {{ $item->nilai ?? 0 }}, '{{ $item->feedback ?? '' }}')"
-                                                class="text-green-600 hover:text-green-900 p-2 hover:bg-green-50 rounded"
-                                                title="Beri Nilai">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                            <form action="{{ route('guru.tugas.hapus-pengumpulan', $item->id) }}"
-                                                method="POST" class="inline"
-                                                onsubmit="return confirm('Hapus pengumpulan ini?')">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit"
-                                                    class="text-red-600 hover:text-red-900 p-2 hover:bg-red-50 rounded"
-                                                    title="Hapus Pengumpulan">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
+                                    <button
+                                        onclick="openNilaiModal({{ $item->id }}, {{ $item->nilai ?? 0 }}, '{{ $item->feedback ?? '' }}')"
+                                        class="text-green-600 hover:text-green-900 p-2 hover:bg-green-50 rounded"
+                                        title="Beri Nilai">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <form action="{{ route('guru.tugas.hapus-pengumpulan', $item->id) }}"
+                                        method="POST" class="inline"
+                                        onsubmit="return confirm('Hapus pengumpulan ini?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit"
+                                            class="text-red-600 hover:text-red-900 p-2 hover:bg-red-50 rounded"
+                                            title="Hapus Pengumpulan">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
 
-                <!-- Pagination -->
-                @if ($pengumpulan->hasPages())
-                    <div class="px-6 py-4 border-t">
-                        {{ $pengumpulan->links() }}
-                    </div>
-                @endif
+            <!-- Pagination -->
+            @if ($pengumpulan->hasPages())
+            <div class="px-6 py-4 border-t">
+                {{ $pengumpulan->links() }}
+            </div>
+            @endif
             @else
-                <div class="text-center py-12">
-                    <div class="mx-auto w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                        <i class="fas fa-inbox text-gray-400 text-2xl"></i>
-                    </div>
-                    <h3 class="text-lg font-medium text-gray-900 mb-2">Belum ada pengumpulan</h3>
-                    <p class="text-gray-500">Belum ada siswa yang mengumpulkan tugas ini.</p>
+            <div class="text-center py-12">
+                <div class="mx-auto w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                    <i class="fas fa-inbox text-gray-400 text-2xl"></i>
                 </div>
+                <h3 class="text-lg font-medium text-gray-900 mb-2">Belum ada pengumpulan</h3>
+                <p class="text-gray-500">Belum ada siswa yang mengumpulkan tugas ini.</p>
+            </div>
             @endif
         </div>
 
         <!-- Daftar Siswa Belum Kumpul -->
         @if ($belumKumpul > 0)
-            <div class="bg-white rounded-xl shadow-sm overflow-hidden mb-6">
-                <div class="px-6 py-4 border-b bg-yellow-50">
-                    <h2 class="text-lg font-semibold text-gray-900">Siswa Belum Mengumpulkan ({{ $belumKumpul }})
-                    </h2>
-                    <p class="text-sm text-gray-600 mt-1">Siswa yang belum mengumpulkan tugas</p>
-                </div>
-                <div class="p-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        @foreach ($siswaBelumKumpul as $siswa)
-                            <div class="border border-gray-200 rounded-lg p-4">
-                                <div class="flex items-center">
-                                    <div
-                                        class="shrink-0 h-10 w-10 bg-gray-100 rounded-full flex items-center justify-center mr-3">
-                                        <i class="fas fa-user text-gray-600"></i>
-                                    </div>
-                                    <div>
-                                        <div class="font-medium text-gray-900">{{ $siswa->nama }}</div>
-                                        <div class="text-sm text-gray-500">
-                                            NISN: {{ $siswa->nisn }}
-                                        </div>
-                                    </div>
+        <div class="bg-white rounded-xl shadow-sm overflow-hidden mb-6">
+            <div class="px-6 py-4 border-b bg-yellow-50">
+                <h2 class="text-lg font-semibold text-gray-900">Siswa Belum Mengumpulkan ({{ $belumKumpul }})
+                </h2>
+                <p class="text-sm text-gray-600 mt-1">Siswa yang belum mengumpulkan tugas</p>
+            </div>
+            <div class="p-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    @foreach ($siswaBelumKumpul as $siswa)
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <div class="flex items-center">
+                            <div
+                                class="shrink-0 h-10 w-10 bg-gray-100 rounded-full flex items-center justify-center mr-3">
+                                <i class="fas fa-user text-gray-600"></i>
+                            </div>
+                            <div>
+                                <div class="font-medium text-gray-900">{{ $siswa->nama }}</div>
+                                <div class="text-sm text-gray-500">
+                                    NISN: {{ $siswa->nisn }}
                                 </div>
                             </div>
-                        @endforeach
+                        </div>
                     </div>
+                    @endforeach
                 </div>
             </div>
+        </div>
         @endif
 
         <!-- Tips -->

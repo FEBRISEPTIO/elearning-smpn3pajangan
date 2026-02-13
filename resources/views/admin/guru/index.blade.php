@@ -55,29 +55,29 @@
             </div>
 
             @if (session('success'))
-                <div class="bg-green-50 border-l-4 border-green-500 p-4 mb-6">
-                    <div class="flex">
-                        <div class="flex-shrink-0">
-                            <i class="fas fa-check-circle text-green-500"></i>
-                        </div>
-                        <div class="ml-3">
-                            <p class="text-sm text-green-700">{{ session('success') }}</p>
-                        </div>
+            <div class="bg-green-50 border-l-4 border-green-500 p-4 mb-6">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-check-circle text-green-500"></i>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm text-green-700">{{ session('success') }}</p>
                     </div>
                 </div>
+            </div>
             @endif
 
             @if (session('error'))
-                <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-6">
-                    <div class="flex">
-                        <div class="flex-shrink-0">
-                            <i class="fas fa-exclamation-circle text-red-500"></i>
-                        </div>
-                        <div class="ml-3">
-                            <p class="text-sm text-red-700">{{ session('error') }}</p>
-                        </div>
+            <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-6">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-exclamation-circle text-red-500"></i>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm text-red-700">{{ session('error') }}</p>
                     </div>
                 </div>
+            </div>
             @endif
 
             <!-- Table -->
@@ -87,11 +87,15 @@
                         <tr>
                             <th scope="col"
                                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                NIP
+                                NIP / NUPTK
                             </th>
                             <th scope="col"
                                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Nama
+                            </th>
+                            <th scope="col"
+                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Jenis PTK
                             </th>
                             <th scope="col"
                                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -113,79 +117,86 @@
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
                         @forelse($guru as $item)
-                            <tr class="hover:bg-gray-50 transition">
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                    {{ $item->nip }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                    {{ $item->nama }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                    {{ $item->email }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span
-                                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $item->jnsklmn == 'L' ? 'bg-blue-100 text-blue-800' : 'bg-pink-100 text-pink-800' }}">
-                                        {{ $item->jnsklmn == 'L' ? 'Laki-laki' : 'Perempuan' }}
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                    {{ $item->no_telp ?? '-' }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                    <div class="flex items-center space-x-3">
-                                        <a href="{{ route('admin.guru.edit', $item->nip) }}"
-                                            class="text-blue-600 hover:text-blue-900 inline-flex items-center">
-                                            <i class="fas fa-edit mr-1"></i>
-                                            <span class="hidden sm:inline">Edit</span>
-                                        </a>
-                                        <form action="{{ route('admin.guru.destroy', $item->nip) }}" method="POST"
-                                            class="inline">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit"
-                                                class="text-red-600 hover:text-red-900 inline-flex items-center"
-                                                onclick="return confirm('Apakah Anda yakin ingin menghapus guru ini?')">
-                                                <i class="fas fa-trash mr-1"></i>
-                                                <span class="hidden sm:inline">Hapus</span>
-                                            </button>
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr>
+                        <tr class="hover:bg-gray-50 transition">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                <div class="flex flex-col">
+                                    <span class="text-gray-900">{{ $item->nip }}</span>
+                                    @if($item->nuptk)
+                                    <span class="text-xs text-gray-500">NUPTK</span>
+                                    @endif
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                {{ $item->nama }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                                {{ $item->jenis_ptk ?? '-' }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                {{ $item->email }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span
+                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $item->jnsklmn == 'L' ? 'bg-blue-100 text-blue-800' : 'bg-pink-100 text-pink-800' }}">
+                                    {{ $item->jnsklmn == 'L' ? 'Laki-laki' : 'Perempuan' }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                {{ $item->no_telp ?? '-' }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <div class="flex items-center space-x-3">
+                                    <a href="{{ route('admin.guru.edit', $item->nip) }}"
+                                        class="text-blue-600 hover:text-blue-900 inline-flex items-center">
+                                        <i class="fas fa-edit mr-1"></i>
+                                        <span class="hidden sm:inline">Edit</span>
+                                    </a>
+                                    <form action="{{ route('admin.guru.destroy', $item->nip) }}" method="POST"
+                                        class="inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit"
+                                            class="text-red-600 hover:text-red-900 inline-flex items-center"
+                                            onclick="return confirm('Apakah Anda yakin ingin menghapus guru ini?')">
+                                            <i class="fas fa-trash mr-1"></i>
+                                            <span class="hidden sm:inline">Hapus</span>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
                         @empty
-                            <tr>
-                                <td colspan="6" class="px-6 py-8 text-center">
-                                    <div class="flex flex-col items-center justify-center text-gray-500">
-                                        <i class="fas fa-users text-4xl mb-3 opacity-50"></i>
-                                        <p class="text-sm">Belum ada data guru</p>
-                                        <a href="{{ route('admin.guru.create') }}"
-                                            class="mt-3 text-blue-600 hover:text-blue-800 text-sm font-medium">
-                                            <i class="fas fa-plus mr-1"></i>Tambah Guru Pertama
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
+                        <tr>
+                            <td colspan="6" class="px-6 py-8 text-center">
+                                <div class="flex flex-col items-center justify-center text-gray-500">
+                                    <i class="fas fa-users text-4xl mb-3 opacity-50"></i>
+                                    <p class="text-sm">Belum ada data guru</p>
+                                    <a href="{{ route('admin.guru.create') }}"
+                                        class="mt-3 text-blue-600 hover:text-blue-800 text-sm font-medium">
+                                        <i class="fas fa-plus mr-1"></i>Tambah Guru Pertama
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
                         @endforelse
                     </tbody>
                 </table>
             </div>
 
             @if ($guru->count())
-                <!-- Info Box -->
-                <div class="mt-6 bg-blue-50 border border-blue-200 rounded-xl p-4">
-                    <div class="flex items-start">
-                        <i class="fas fa-info-circle text-blue-500 mt-1 mr-3"></i>
-                        <div>
-                            <h4 class="text-sm font-semibold text-blue-800 mb-1">Informasi Login Guru:</h4>
-                            <div class="text-sm text-blue-700 space-y-1">
-                                <p><strong class="font-medium">Username:</strong> NIP</p>
-                                <p><strong class="font-medium">Password:</strong> NIP (bisa direset melalui tombol reset
-                                    password)</p>
-                            </div>
+            <!-- Info Box -->
+            <div class="mt-6 bg-blue-50 border border-blue-200 rounded-xl p-4">
+                <div class="flex items-start">
+                    <i class="fas fa-info-circle text-blue-500 mt-1 mr-3"></i>
+                    <div>
+                        <h4 class="text-sm font-semibold text-blue-800 mb-1">Informasi Login Guru:</h4>
+                        <div class="text-sm text-blue-700 space-y-1">
+                            <p><strong class="font-medium">Username:</strong> NIP atau NUPTK</p>
+                            <p><strong class="font-medium">Password:</strong> NIP atau NUPTK</p>
                         </div>
                     </div>
                 </div>
+            </div>
             @endif
         </div>
     </main>

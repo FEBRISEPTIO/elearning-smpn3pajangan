@@ -83,13 +83,25 @@
                         <!-- nip -->
                         <div>
                             <label for="nip" class="block text-sm font-medium text-gray-700 mb-1">
-                                nip <span class="text-red-500">*</span>
+                                NIP
                             </label>
-                            <input type="text" id="nip" name="nip" value="{{ old('nip') }}" required
+                            <input type="text" id="nip" name="nip" value="{{ old('nip') }}"
                                 maxlength="20"
                                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-                                placeholder="Masukkan nip guru">
-                            <p class="mt-1 text-xs text-gray-500">Nomor Induk Guru (hanya angka)</p>
+                                placeholder="Masukkan NIP guru">
+                            <p class="mt-1 text-xs text-gray-500">Nomor Induk Pegawai (hanya isi jika ada)</p>
+                        </div>
+
+                        <!-- NUPTK -->
+                        <div>
+                            <label for="nuptk" class="block text-sm font-medium text-gray-700 mb-1">
+                                NUPTK
+                            </label>
+                            <input type="text" id="nuptk" name="nuptk" value="{{ old('nuptk') }}"
+                                maxlength="20"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+                                placeholder="Masukkan NUPTK guru">
+                            <p class="mt-1 text-xs text-gray-500">Nomor Unik Pendidik dan Tenaga Kependidikan</p>
                         </div>
 
                         <!-- Nama -->
@@ -105,9 +117,9 @@
                         <!-- Email -->
                         <div>
                             <label for="email" class="block text-sm font-medium text-gray-700 mb-1">
-                                Email <span class="text-red-500">*</span>
+                                Email
                             </label>
-                            <input type="email" id="email" name="email" value="{{ old('email') }}" required
+                            <input type="email" id="email" name="email" value="{{ old('email') }}"
                                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
                                 placeholder="nama@email.com">
                         </div>
@@ -115,6 +127,16 @@
 
                     <!-- Kolom 2 -->
                     <div class="space-y-4">
+                        <!-- Jenis PTK -->
+                        <div>
+                            <label for="jenis_ptk" class="block text-sm font-medium text-gray-700 mb-1">
+                                Jenis PTK <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" id="jenis_ptk" name="jenis_ptk" value="{{ old('jenis_ptk') }}" required
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+                                placeholder="Contoh: Guru, Kepala Sekolah">
+                        </div>
+
                         <!-- Jenis Kelamin -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">
@@ -165,8 +187,8 @@
                         <div>
                             <h4 class="text-sm font-semibold text-blue-800 mb-1">Informasi Login:</h4>
                             <div class="text-sm text-blue-700 space-y-1">
-                                <p><strong class="font-medium">Username:</strong> nip</p>
-                                <p><strong class="font-medium">Password:</strong> nip</p>
+                                <p><strong class="font-medium">Username:</strong> NIP atau NUPTK</p>
+                                <p><strong class="font-medium">Password:</strong> NIP atau NUPTK</p>
                             </div>
                             <p class="text-xs text-blue-600 mt-2">
                                 Guru dapat mengganti password setelah login pertama kali.

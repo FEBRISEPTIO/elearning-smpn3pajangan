@@ -334,8 +334,7 @@
                         <h4 class="text-sm font-semibold text-blue-800 mb-1">Informasi Login Siswa:</h4>
                         <div class="text-sm text-blue-700 space-y-1">
                             <p><strong class="font-medium">Username:</strong> NISN</p>
-                            <p><strong class="font-medium">Password:</strong> NIS (akan direset otomatis jika NIS
-                                diubah)</p>
+                            <p><strong class="font-medium">Password:</strong> NIS</p>
                         </div>
                     </div>
                 </div>

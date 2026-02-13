@@ -55,23 +55,23 @@
             </div>
 
             @if ($errors->any())
-                <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-6">
-                    <div class="flex">
-                        <div class="flex-shrink-0">
-                            <i class="fas fa-exclamation-circle text-red-500"></i>
-                        </div>
-                        <div class="ml-3">
-                            <h3 class="text-sm font-medium text-red-800">Ada kesalahan dalam pengisian form</h3>
-                            <div class="mt-2 text-sm text-red-700">
-                                <ul class="list-disc list-inside space-y-1">
-                                    @foreach ($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
-                                </ul>
-                            </div>
+            <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-6">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-exclamation-circle text-red-500"></i>
+                    </div>
+                    <div class="ml-3">
+                        <h3 class="text-sm font-medium text-red-800">Ada kesalahan dalam pengisian form</h3>
+                        <div class="mt-2 text-sm text-red-700">
+                            <ul class="list-disc list-inside space-y-1">
+                                @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
                         </div>
                     </div>
                 </div>
+            </div>
             @endif
 
             <!-- Form -->
@@ -99,9 +99,9 @@
                             class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
                             <option value="">Pilih Kelas</option>
                             @foreach ($kelas as $k)
-                                <option value="{{ $k->id }}" {{ old('kelas_id') == $k->id ? 'selected' : '' }}>
-                                    {{ $k->kelas }}
-                                </option>
+                            <option value="{{ $k->id }}" {{ old('kelas_id') == $k->id ? 'selected' : '' }}>
+                                {{ $k->kelas }}
+                            </option>
                             @endforeach
                         </select>
                     </div>
@@ -115,10 +115,10 @@
                             class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
                             <option value="">Pilih Mata Pelajaran</option>
                             @foreach ($mapels as $mapel)
-                                <option value="{{ $mapel->id }}"
-                                    {{ old('mata_pelajaran_id') == $mapel->id ? 'selected' : '' }}>
-                                    {{ $mapel->nama_mapel }}
-                                </option>
+                            <option value="{{ $mapel->id }}"
+                                {{ old('mata_pelajaran_id') == $mapel->id ? 'selected' : '' }}>
+                                {{ $mapel->nama_mapel }}
+                            </option>
                             @endforeach
                         </select>
                     </div>
@@ -137,11 +137,11 @@
                 <!-- Konten Teks -->
                 <div class="mb-6">
                     <label for="konten_teks" class="block text-sm font-medium text-gray-700 mb-1">
-                        Konten Materi
+                        Isi Materi
                     </label>
                     <textarea id="konten_teks" name="konten_teks" rows="8"
                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-                        placeholder="Tulis konten materi Anda di sini...">{{ old('konten_teks') }}</textarea>
+                        placeholder="Tulis isi materi Anda di sini...">{{ old('konten_teks') }}</textarea>
                 </div>
 
                 <!-- File Upload -->
@@ -155,43 +155,6 @@
                     <p class="mt-2 text-xs text-gray-500">
                         Format: PDF, DOC, DOCX, PPT, PPTX, TXT, JPG, JPEG, PNG (Maks. 20MB)
                     </p>
-                </div>
-
-                <!-- Link Video -->
-                <div class="mb-6">
-                    <label for="link_video" class="block text-sm font-medium text-gray-700 mb-1">
-                        Link Video (Opsional)
-                    </label>
-                    <input type="url" id="link_video" name="link_video" value="{{ old('link_video') }}"
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-                        placeholder="https://youtube.com/watch?v=...">
-                    <p class="mt-2 text-xs text-gray-500">
-                        Contoh: YouTube, Vimeo, atau link video lainnya
-                    </p>
-                </div>
-
-                <!-- Additional Settings -->
-                <div class="mb-6 bg-gray-50 border border-gray-200 rounded-xl p-6">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Pengaturan Tambahan</h3>
-                    <div class="space-y-4">
-                        <div class="flex items-center">
-                            <input type="checkbox" id="notify_siswa" name="notify_siswa" value="1"
-                                {{ old('notify_siswa', true) ? 'checked' : '' }}
-                                class="h-5 w-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
-                            <label for="notify_siswa" class="ml-3 text-sm text-gray-700">
-                                Kirim notifikasi ke siswa
-                            </label>
-                        </div>
-
-                        <div class="flex items-center">
-                            <input type="checkbox" id="allow_komentar" name="allow_komentar" value="1"
-                                {{ old('allow_komentar', true) ? 'checked' : '' }}
-                                class="h-5 w-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
-                            <label for="allow_komentar" class="ml-3 text-sm text-gray-700">
-                                Izinkan komentar pada materi
-                            </label>
-                        </div>
-                    </div>
                 </div>
 
                 <!-- Action Buttons -->
@@ -218,7 +181,6 @@
                         <li>• Judul materi harus jelas dan deskriptif</li>
                         <li>• Sertakan konten yang lengkap dan terstruktur</li>
                         <li>• Lampirkan file pendukung jika diperlukan</li>
-                        <li>• Tambahkan link video untuk pembelajaran yang lebih menarik</li>
                         <li>• Pastikan materi sesuai dengan level kelas yang dituju</li>
                     </ul>
                 </div>

@@ -97,11 +97,11 @@
                                 NIS <span class="text-red-500">*</span>
                             </label>
                             <input type="text" id="nis" name="nis" value="{{ old('nis', $siswa->nis) }}"
-                                required maxlength="8"
+                                required maxlength="4"
                                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-                                placeholder="Masukkan 8 digit NIS" pattern="[0-9]{8}"
-                                title="Masukkan 8 digit angka NIS">
-                            <p class="mt-2 text-xs text-gray-500">8 digit angka NIS</p>
+                                placeholder="Masukkan 4 digit NIS" pattern="[0-9]{4}"
+                                title="Masukkan 4 digit angka NIS">
+                            <p class="mt-2 text-xs text-gray-500">4 digit angka NIS</p>
                         </div>
 
                         <!-- Nama -->
@@ -250,11 +250,9 @@
                             <h4 class="text-sm font-semibold text-blue-800 mb-1">Informasi Login:</h4>
                             <div class="text-sm text-blue-700 space-y-1">
                                 <p><strong class="font-medium">Username:</strong> {{ $siswa->nisn }}</p>
-                                <p><strong class="font-medium">Password Saat Ini:</strong> {{ $siswa->nis }}</p>
+                                <p><strong class="font-medium">Password:</strong> {{ $siswa->nis }}</p>
                             </div>
-                            <p class="text-xs text-blue-600 mt-2">
-                                Password akan otomatis diperbarui jika NIS diubah.
-                            </p>
+                
                         </div>
                     </div>
                 </div>

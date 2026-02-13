@@ -20,26 +20,27 @@
             </h1>
 
             @if ($errors->any())
-                <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-6">
-                    <div class="flex">
-                        <i class="fas fa-exclamation-circle text-red-500 mt-1 mr-3"></i>
-                        <div>
-                            <h3 class="text-sm font-semibold text-red-800">Ada kesalahan:</h3>
-                            <ul class="mt-1 text-sm text-red-700 list-disc list-inside">
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
+            <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-6">
+                <div class="flex">
+                    <i class="fas fa-exclamation-circle text-red-500 mt-1 mr-3"></i>
+                    <div>
+                        <h3 class="text-sm font-semibold text-red-800">Ada kesalahan:</h3>
+                        <ul class="mt-1 text-sm text-red-700 list-disc list-inside">
+                            @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
                     </div>
                 </div>
+            </div>
             @endif
 
             <form method="POST"
-                action="{{ isset($tugas) ? route('guru.tugas.update', $tugas->id) : route('guru.tugas.store') }}">
+                action="{{ isset($tugas) ? route('guru.tugas.update', $tugas->id) : route('guru.tugas.store') }}"
+                enctype="multipart/form-data">
                 @csrf
                 @if (isset($tugas))
-                    @method('PUT')
+                @method('PUT')
                 @endif
 
                 <!-- Judul -->
@@ -63,10 +64,10 @@
                             required>
                             <option value="">Pilih Kelas</option>
                             @foreach ($kelas as $k)
-                                <option value="{{ $k->id }}"
-                                    {{ old('kelas_id', $tugas->kelas_id ?? '') == $k->id ? 'selected' : '' }}>
-                                    {{ $k->kelas }}
-                                </option>
+                            <option value="{{ $k->id }}"
+                                {{ old('kelas_id', $tugas->kelas_id ?? '') == $k->id ? 'selected' : '' }}>
+                                {{ $k->kelas }}
+                            </option>
                             @endforeach
                         </select>
                     </div>
@@ -80,10 +81,10 @@
                             required>
                             <option value="">Pilih Mapel</option>
                             @foreach ($mapels as $m)
-                                <option value="{{ $m->id }}"
-                                    {{ old('mata_pelajaran_id', $tugas->mapel_id ?? '') == $m->id ? 'selected' : '' }}>
-                                    {{ $m->nama_mapel }}
-                                </option>
+                            <option value="{{ $m->id }}"
+                                {{ old('mata_pelajaran_id', $tugas->mapel_id ?? '') == $m->id ? 'selected' : '' }}>
+                                {{ $m->nama_mapel }}
+                            </option>
                             @endforeach
                         </select>
                     </div>
@@ -103,6 +104,28 @@
                     <textarea name="konten_tugas" rows="6"
                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                         placeholder="Tulis instruksi dan konten tugas di sini...">{{ old('konten_tugas', $tugas->tugas ?? '') }}</textarea>
+                </div>
+
+                <!-- File Tugas (Lampiran dari Guru) -->
+                <div class="mb-6">
+                    <label class="block mb-2 font-medium text-gray-700">Lampiran File (Opsional)</label>
+                    @if(isset($tugas) && $tugas->file)
+                    <div class="mb-3 p-3 bg-blue-50 border border-blue-200 rounded-lg flex items-center justify-between">
+                        <div class="flex items-center">
+                            <i class="fas fa-file-alt text-blue-500 mr-3"></i>
+                            <span class="text-sm font-medium text-blue-700">File sudah ada: {{ basename($tugas->file) }}</span>
+                        </div>
+                        <a href="{{ Storage::url($tugas->file) }}" target="_blank" class="text-xs text-blue-600 hover:underline">
+                            Lihat File
+                        </a>
+                    </div>
+                    @endif
+                    <input type="file" name="file_tugas"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                    <p class="mt-2 text-sm text-gray-500">
+                        <i class="fas fa-info-circle mr-1"></i>
+                        Format: pdf, doc, docx, ppt, pptx, jpg, png. Max 5MB.
+                    </p>
                 </div>
 
                 <!-- Deadline -->
