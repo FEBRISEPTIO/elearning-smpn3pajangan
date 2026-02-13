@@ -51,7 +51,7 @@
             </div>
 
             <div class="mb-8">
-                <h3 class="text-lg font-bold text-gray-900 mb-4 border-b pb-2">Grafik Perkembangan Nilai</h3>
+                <h3 class="text-lg font-bold text-gray-900 mb-4 border-b pb-2">Grafik Perkembangan nilai</h3>
                 <div class="h-64">
                     <canvas id="nilaiChart"></canvas>
                 </div>
